@@ -12,8 +12,9 @@ x = True
 #Even_clicks checker
 
 def exchange_piece_and_generate_string(button1,button2,i,j):
-	button2["image"]=button1["image"]
-	button1["image"]=''
+    if (button1["image"]!=''):
+        button2["image"]=button1["image"]
+        button1["image"]=''
 
 def move(k):
     
@@ -27,18 +28,19 @@ def move(k):
 
     else:
         print(k)
-        exchange_piece_and_generate_string(button_list[prev],button_list[k],prev,k)
         button_list[k].configure(activebackground = 'red')
+        exchange_piece_and_generate_string(button_list[prev],button_list[k],prev,k)
         
-        if prev%2==0:
+        if (prev//8 + prev %8)%2==0:
             button_list[prev].configure(bg = '#8af542')
         else:
             button_list[prev].configure(bg = 'white')
 
-        if k%2==0:
+        if (k//8+k%8)%2==0:
             button_list[k].configure(bg = '#8af542')
         else:
             button_list[k].configure(bg = 'white')
+
         prev = -1
     x = not x    
 
