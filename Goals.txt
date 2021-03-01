@@ -1,0 +1,7 @@
+1> complete gui
+
+AFter the canvas chess is ready
+
+moves ko design karo and then return the moves
+
+
