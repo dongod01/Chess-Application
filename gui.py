@@ -41,7 +41,6 @@ def move(k):
         else:
             button_list[k].configure(bg = 'white')
 
-        prev = -1
     x = not x    
 
 
