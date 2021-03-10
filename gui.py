@@ -38,33 +38,9 @@ def exchange_piece(button1,button2):
         button1["image"]=''
     
 
-def generate_string(i,j):
-    
-    # try:
-    #     ind = chess_list.index(i, 0, len(chess_list)-1)
-        
-    # except ValueError:
-    #     print("No piece in initial index")
-    #     return None
-    # s = ''    
-    # if ind==0 or ind==7 or ind==24 or ind==31:
-    #     s = 'R'
-    # elif ind==1 or ind==6 or ind==25 or ind==30:
-    #     s = 'N'
-    # elif ind==2 or ind==5 or ind==26 or ind==29:
-    #     s = 'B'
-    # elif ind==3 or ind==27:
-    #     s = 'Q'
-    # elif ind==4 or ind==28:
-    #     s = 'K'
-    # elif ind>=8 and ind<24:
-    #     s=''
-    # s += sqr_notation(j)
-    # # print(s)
-    
-    
+def generate_uci(i,j):
+   
     ''''This function is being used only when move is legal'''
-    
     s1 = sqr_notation(i)
     s1+= sqr_notation(j)
     
@@ -108,34 +84,32 @@ def move(k):
             '''If the move is legal'''
             # move = generate_string(prev,k)
             
-            move = '' + sqr_notation(prev) + sqr_notation(k)
-            if chess.Move.from_uci(move) in board.legal_moves:
+            uci = generate_uci(prev,k)  
+            yuci = chess.Move.from_uci(uci)
+
+            if yuci in board.legal_moves:
                 
                 exchange_piece(button_list[prev],button_list[k])
                 print("Verifying move:")
                 
                 '''Standard algebraic notation san'''
-                move = generate_string(prev,k)  
                 
-                board.push_san(move)
-                
-                '''uci notation'''
-                uci = ""+ sqr_notation(prev) + sqr_notation(k)  
-                yuci = chess.Move.from_uci(uci)
-                
-                if board.is_castling(yuci):
-                    
+                alpha = board.san(yuci)
+                board.push_san(uci)
+
+                if (alpha=="O-O" or alpha=="O-O-O"):
                     # 4 cases white-black and short castle-long castle
                     # True indicates white's turn'
                     print("Inside castling")
-                    if move=="0-0" and board.turn==True:
+                    if alpha=="O-O" and board.turn==False:
                         exchange_piece(button_list[7],button_list[5])
-                    elif move=="0-0" and board.turn==False:
+                    elif alpha=="O-O" and board.turn==True:
                         exchange_piece(button_list[63],button_list[61])
-                    elif move=="0-0-0" and board.turn==True:
+                    elif alpha=="O-O-O" and board.turn==False:
                         exchange_piece(button_list[0],button_list[3])
-                    elif move=="0-0-0" and board.turn==False:
-                        exchange_piece(button_list[56],button_list[59])
+                    elif alpha=="O-O-O" and board.turn==True:
+                        exchange_piece(button_list[56],button_list[59])  
+
                 
                 elif board.is_en_passant(yuci):
                     # Well
@@ -175,8 +149,6 @@ def move(k):
                 if ind2!=-1:
                     chess_list[ind2] = -1  #Making the captured piece -1 in chesslist
                 
-                
-                
             reinstate_color(prev)
     
             reinstate_color(k)
@@ -207,9 +179,9 @@ def initialize_board(button_list,window):
             
             k = 8*i +j
             if (i+j)%2 == 0:
-                button_list.append(tk.Button(window,bg='#8af542',text=str(8*i+j),command = lambda k = k:move(k)))
+                button_list.append(tk.Button(window,bg='#8af542',text=str(8*i+j),command = lambda k =k :move(k)))
             else:
-                button_list.append(tk.Button(window,bg='white',text=str(8*i+j),command = lambda k = k :move(k)))
+                button_list.append(tk.Button(window,bg='white',text=str(8*i+j),command = lambda k =k :move(k)))
 
             button_list[k].place(height=50,width=50, x=left_most, y=highest)
             left_most+=50
