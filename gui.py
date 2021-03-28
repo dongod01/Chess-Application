@@ -14,8 +14,15 @@ board = chess.Board()
 x = True
 #Even_clicks checker
 
-def ispromotion(move,uci,prev,k):
+def promotion_check(prev,k):
+    if chess_list.index(prev,0,32) in range(8,24):
+        i1 = chess_list.index(prev,0,32)
+        if (board.turn==True and k in range(56,64)):
+            return 1
+        elif (board.turn==False and k in range(0,8)):
+            return 2
     return False
+    
 
 def reinstate_color(prev):
     if (prev//8 + prev %8)%2==0:
@@ -36,6 +43,11 @@ def exchange_piece(button1,button2):
     if (button1["image"]!=''):
         button2["image"]=button1["image"]
         button1["image"]=''
+        
+def remove_piece(button1):
+    button1["image"] = ''
+    print("Removing")
+        
     
 
 def generate_uci(i,j):
@@ -86,28 +98,66 @@ def move(k):
             
             uci = generate_uci(prev,k)  
             yuci = chess.Move.from_uci(uci)
-
-            if yuci in board.legal_moves:
+            
+            
+            
+            if promotion_check(prev,k)==1 or promotion_check(prev,k)==2:
+                
+                print("Inisde promotion check")
+                
+                valpcheck = promotion_check(prev,k)
+                newp = input()
+                if newp=='q' and valpcheck == 1:
+                    assign_new_piece(button_list[prev],"alpha/wq.png")
+                elif newp=='r' and valpcheck == 1:
+                    assign_new_piece(button_list[prev],"alpha/wr.png")
+                elif newp=='b' and valpcheck == 1:
+                    assign_new_piece(button_list[prev],"alpha/wb.png")
+                elif newp=='n' and valpcheck == 1:
+                    assign_new_piece(button_list[prev],"alpha/wn.png")
+                elif newp=='q' and valpcheck == 2:
+                    assign_new_piece(button_list[prev],"alpha/wq.png")
+                elif newp=='r' and valpcheck == 2:
+                    assign_new_piece(button_list[prev],"alpha/wr.png")
+                elif newp=='b' and valpcheck == 2:
+                    assign_new_piece(button_list[prev],"alpha/wb.png")
+                elif newp=='n' and valpcheck == 2:
+                    assign_new_piece(button_list[prev],"alpha/wn.png")
+                
                 
                 exchange_piece(button_list[prev],button_list[k])
+                newp ='q'
+                uci += newp
+                
+                board.push_san(uci)
+                print(board)
+                
+            
+            elif yuci in board.legal_moves:
+                
+                exchange_piece(button_list[prev],button_list[k])    
+                # '''First piece move'''
+                
                 print("Verifying move:")
                 
                 '''Standard algebraic notation san'''
                 
                 alpha = board.san(yuci)
-                board.push_san(uci)
+                # print("Alpha" + alpha)
+                # print("Yuci: "+ str(yuci))
+                # board.push_san(uci)
 
-                if (alpha=="O-O" or alpha=="O-O-O"):
+                if (board.is_castling(yuci)):
                     # 4 cases white-black and short castle-long castle
                     # True indicates white's turn'
                     print("Inside castling")
-                    if alpha=="O-O" and board.turn==False:
+                    if alpha=="O-O" and board.turn==True:
                         exchange_piece(button_list[7],button_list[5])
-                    elif alpha=="O-O" and board.turn==True:
+                    elif alpha=="O-O" and board.turn==False:
                         exchange_piece(button_list[63],button_list[61])
-                    elif alpha=="O-O-O" and board.turn==False:
-                        exchange_piece(button_list[0],button_list[3])
                     elif alpha=="O-O-O" and board.turn==True:
+                        exchange_piece(button_list[0],button_list[3])
+                    elif alpha=="O-O-O" and board.turn==False:
                         exchange_piece(button_list[56],button_list[59])  
 
                 
@@ -115,19 +165,13 @@ def move(k):
                     # Well
                     print("Inside en passant")
                     mod = (k-prev)%8
-                    dom = (prev-k)%8
                     if mod==7:
                         mod = -1
-                    if dom==7:
-                        dom=-1
                     
-                    if board.turn==True:
-                        chess_list[prev+mod] = -1
-                    elif board.turn == False:
-                        chess_list[prev-dom] = -1
-                
-                elif ispromotion(move,uci,prev,k):
-                    print("Happiness lies in joy.Aisa Kabiro boloy.")
+                    delpawn = prev + mod
+                    ind_del = chess_list.index(delpawn,0,32)
+                    print("Deleting")
+                    remove_piece(button_list[delpawn])
                 
                 elif board.is_capture(yuci):
                     # Write code
@@ -136,6 +180,10 @@ def move(k):
                 else:
                     print("Xyz")
                     
+                
+                board.push_san(uci)
+                print(board)
+                
                 try:
                     # Index of capturing piece
                     ind1 = chess_list.index(prev, 0, len(chess_list)-1)
