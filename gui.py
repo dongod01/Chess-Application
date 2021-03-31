@@ -1,5 +1,4 @@
-""" This is the main Gui Program
-"""
+# This is the main Gui Program
 
 import chess
 import tkinter as tk
@@ -16,7 +15,6 @@ x = True
 
 def promotion_check(prev,k):
     if chess_list.index(prev,0,32) in range(8,24):
-        i1 = chess_list.index(prev,0,32)
         if (board.turn==True and k in range(56,64)):
             return 1
         elif (board.turn==False and k in range(0,8)):
@@ -56,8 +54,6 @@ def remove_piece(button1):
     button1["image"] = ''
     print("Removing")
         
-    
-
 def generate_uci(i,j):
    
     s1 = sqr_notation(i)
@@ -68,41 +64,44 @@ def generate_uci(i,j):
     print(x)
     return s1
 
-
 def move(k):
     
     global x
     global prev
     
     if x:
-        prev = k
-        #print(k)
-        button_list[k].configure(bg = 'green')
-        
-        # for button in button_list:
-        #     button_list[k].configure(activebackground = 'red')
-        # try:
-        #     index = chess_list.index(k, 0, len(chess_list)-1)
-        #     button_list[k].configure(bg = 'green')
-        # except ValueError:
-        #     button_list[k].configure(activebackground = 'blue')
-        #     x = not x
+        if (k in chess_list):
+            prev = k
+            print(k)
+            button_list[k].configure(bg = 'green')
+            
+            # for button in button_list:
+            #     button_list[k].configure(activebackground = 'red')
+            # try:
+            #     index = chess_list.index(k, 0, len(chess_list)-1)
+            #     button_list[k].configure(bg = 'green')
+            # except ValueError:
+            #     button_list[k].configure(activebackground = 'blue')
+            #     x = not x
+        else:
+            x = not x
+
+
     else:
-        #print(k)
+        print(k)
         # Handling the case when same square is clicked twice
         if k==prev and (k//8+k%8)%2==0:
             button_list[k].configure(bg = '#8af542')
         elif k==prev and (k//8+k%8)%2!=0:
             button_list[k].configure(bg = 'white')
-        else:
-                
+
+        else:        
             # button_list[k].configure(bg = 'red')
             # time.sleep(0.075)
             # button_list[k].configure(bg = 'black')
             
             '''If the move is legal'''
-            # move = generate_string(prev,k)
-            
+
             uci = generate_uci(prev,k)  
             yuci = chess.Move.from_uci(uci)
                         
@@ -134,14 +133,13 @@ def move(k):
                 uci += newp
                 
                 board.push_san(uci)
-                print(board)
-                
+                print(board)           
             
             elif yuci in board.legal_moves:
                     
-                # '''First piece move'''
+                # First piece move
                 
-                #print("Verifying move:")
+                print("Verifying move:")
                 
                 '''Standard algebraic notation san'''
                 
@@ -214,7 +212,7 @@ def move(k):
             reinstate_color(k)
     
             prev = -1
-            
+
     x = not x    
     
 def initialize_board(button_list,window):
