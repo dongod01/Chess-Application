@@ -36,7 +36,6 @@ def reinstate_color(prev):
     else:
         button_list[prev].configure(bg = 'white')
 
-
 def sqr_notation(i):
     if i<=63:
         c = 'a'
@@ -63,6 +62,49 @@ def generate_uci(i,j):
     x = board.san(y)
     print(x)
     return s1
+
+
+def func_return(string1): 
+    global newp
+    newp = string1
+    pop.destroy()
+
+def call_message_box():
+    global pop
+    pop = tk.Toplevel(window)
+    pop.geometry("50x200")
+    if (board.turn == True):
+        button1 = tk.Button(pop,bg='white',command = lambda : func_return('q'))
+        button1.place(height=50,width=50, x=0, y=0)
+        assign_new_piece(button1,"alpha/wq.png")
+        
+        button2 = tk.Button(pop,bg='white',command = lambda : func_return('b'))
+        button2.place(height=50,width=50, x=0, y=50)
+        assign_new_piece(button2,"alpha/wb.png")
+        
+        button3 = tk.Button(pop,bg='white',command = lambda : func_return('n'))
+        button3.place(height=50,width=50, x=0, y=100)
+        assign_new_piece(button3,"alpha/wn.png")
+        
+        button4 = tk.Button(pop,bg='white',command = lambda : func_return('r'))
+        button4.place(height=50,width=50, x=0, y=150)
+        assign_new_piece(button4,"alpha/wr.png")
+    else:
+        button1 = tk.Button(pop,bg='white',command = lambda : func_return('q'))
+        button1.place(height=50,width=50, x=0, y=0)
+        assign_new_piece(button1,"alpha/bq.png")
+
+        button2 = tk.Button(pop,bg='white',command = lambda : func_return('b'))
+        button2.place(height=50,width=50, x=0, y=50)
+        assign_new_piece(button2,"alpha/bb.png")
+        
+        button3 = tk.Button(pop,bg='white',command = lambda : func_return('n'))
+        button3.place(height=50,width=50, x=0, y=100)
+        assign_new_piece(button3,"alpha/bn.png")
+        
+        button4 = tk.Button(pop,bg='white',command = lambda : func_return('r'))
+        button4.place(height=50,width=50, x=0, y=150)
+        assign_new_piece(button4,"alpha/br.png")
 
 def move(k):
     
@@ -110,7 +152,9 @@ def move(k):
                 print("Inisde promotion check")
                 
                 valpcheck = promotion_check(prev,k)
-                newp = input()
+                call_message_box()    
+                window.wait_window(pop)     # the function waits for the other window to close
+
                 if newp=='q' and valpcheck == 1:
                     assign_new_piece(button_list[prev],"alpha/wq.png")
                 elif newp=='r' and valpcheck == 1:
@@ -120,16 +164,15 @@ def move(k):
                 elif newp=='n' and valpcheck == 1:
                     assign_new_piece(button_list[prev],"alpha/wn.png")
                 elif newp=='q' and valpcheck == 2:
-                    assign_new_piece(button_list[prev],"alpha/wq.png")
+                    assign_new_piece(button_list[prev],"alpha/bq.png")
                 elif newp=='r' and valpcheck == 2:
-                    assign_new_piece(button_list[prev],"alpha/wr.png")
+                    assign_new_piece(button_list[prev],"alpha/br.png")
                 elif newp=='b' and valpcheck == 2:
-                    assign_new_piece(button_list[prev],"alpha/wb.png")
+                    assign_new_piece(button_list[prev],"alpha/bb.png")
                 elif newp=='n' and valpcheck == 2:
-                    assign_new_piece(button_list[prev],"alpha/wn.png")
+                    assign_new_piece(button_list[prev],"alpha/bn.png")
                 
                 exchange_piece(button_list[prev],button_list[k])
-                newp ='q'
                 uci += newp
                 
                 board.push_san(uci)
@@ -226,9 +269,9 @@ def initialize_board(button_list,window):
             
             k = 8*i +j
             if (i+j)%2 == 0:
-                button_list.append(tk.Button(window,bg='#8af542',text=str(8*i+j),command = lambda k =k :move(k)))
+                button_list.append(tk.Button(window,bg='#8af542',text=str(8*i+j),command = lambda k=k: move(k)))
             else:
-                button_list.append(tk.Button(window,bg='white',text=str(8*i+j),command = lambda k =k :move(k)))
+                button_list.append(tk.Button(window,bg='white',text=str(8*i+j),command = lambda k=k: move(k)))
 
             button_list[k].place(height=50,width=50, x=left_most, y=highest)
             left_most+=50
@@ -290,16 +333,15 @@ def initialize_chess(chess_list,button_list,window):
     assign_new_piece(button_list[63],png_path["br"])
     
 def main():
+    global window
     window = tk.Tk()
     window.title('Chess')
     window.geometry("960x540")
     window.resizable(False,False)
-    print(sqr_notation(83))
+
     initialize_board(button_list,window)
     initialize_chess(chess_list,button_list,window)
-    
-    #game (button_list)
-    
+
     window.mainloop()
     
 if __name__ == "__main__":
