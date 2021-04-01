@@ -65,7 +65,7 @@ def generate_uci(i,j):
 
 
 def func_return(string1): 
-    global newp
+    global newp                 
     newp = string1
     pop.destroy()
 
@@ -239,13 +239,13 @@ def move(k):
                 
                 try:
                     # Index of capturing piece
-                    ind1 = chess_list.index(prev, 0, len(chess_list)-1)
+                    ind1 = chess_list.index(prev, 0, len(chess_list))
                     
                 except ValueError:
                     print("No piece in initial index in move function")
                 
                 # Index of captured piece
-                ind2 = chess_list.index(k, 0, len(chess_list)-1) if k in chess_list else -1
+                ind2 = chess_list.index(k, 0, len(chess_list)) if k in chess_list else -1
                 chess_list[ind1] = k
                 if ind2!=-1:
                     chess_list[ind2] = -1  #Making the captured piece -1 in chesslist
