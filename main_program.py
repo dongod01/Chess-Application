@@ -2,6 +2,8 @@
 	same move and if they are then update gui and send the move to the other player. 
 """
 
+""" always use loopback or ::1 or [::1] for local please """ 
+
 import gui
 import socket
 
