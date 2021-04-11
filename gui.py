@@ -1,5 +1,7 @@
 # This is the main Gui Program
+# Wherever it is not mentioned explicitly True means white and False means black
 
+import main_program
 import chess
 import tkinter as tk
 from PIL import Image, ImageTk
@@ -58,11 +60,10 @@ def generate_uci(i,j):
     s1 = sqr_notation(i)
     s1+= sqr_notation(j)
     
+    print("this is the uci "+ s1)
     y = chess.Move.from_uci(s1)
     x = board.san(y)
-    print(x)
     return s1
-
 
 def func_return(string1): 
     global newp                 
@@ -106,28 +107,42 @@ def call_message_box():
         button4.place(height=50,width=50, x=0, y=150)
         assign_new_piece(button4,"alpha/br.png")
 
-def move(k):
+def send_move(prev,k):
+    resultant_string = str(prev) + "," + str(k)
+    my_socket.sendall(resultant_string.encode())
+
+def others_move():
+    str_other = my_socket.recv(1024).decode()
+    str1,str2 = str_other.split(',')
     
+    prev = int(str1)
+    k = int(str2)
+
+    print(prev)
+    print(k)
+
+    print("this is " + str(prev) + "  " + str(k))
+
+    exchange_piece(button_list[prev],button_list[k])
+    uci = generate_uci(prev,k)
+    
+    board.push_san(uci)
+    print(board)  
+
+def my_move(k):
     global x
     global prev
     
     if x:
         if (k in chess_list):
-            prev = k
-            print(k)
-            button_list[k].configure(bg = 'green')
-            
-            # for button in button_list:
-            #     button_list[k].configure(activebackground = 'red')
-            # try:
-            #     index = chess_list.index(k, 0, len(chess_list)-1)
-            #     button_list[k].configure(bg = 'green')
-            # except ValueError:
-            #     button_list[k].configure(activebackground = 'blue')
-            #     x = not x
+            if ((color_val and board.turn == True) or not(color_val or board.turn == False)):
+                prev = k
+                print(k)
+                button_list[k].configure(bg = 'green')
+            else:
+                x = not x
         else:
             x = not x
-
 
     else:
         print(k)
@@ -137,11 +152,7 @@ def move(k):
         elif k==prev and (k//8+k%8)%2!=0:
             button_list[k].configure(bg = 'white')
 
-        else:        
-            # button_list[k].configure(bg = 'red')
-            # time.sleep(0.075)
-            # button_list[k].configure(bg = 'black')
-            
+        else: 
             '''If the move is legal'''
 
             uci = generate_uci(prev,k)  
@@ -175,6 +186,7 @@ def move(k):
                 exchange_piece(button_list[prev],button_list[k])
                 uci += newp
                 
+                send_move(prev,k)
                 board.push_san(uci)
                 print(board)           
             
@@ -194,7 +206,7 @@ def move(k):
                     # True indicates white's turn'
                     
                     # These two checks work to include the case when the rook is clicked for castling
-                    if 	 (k == 0 or k==56):
+                    if 	 (k == 0 or k == 56):
                         k+=2
 
                     elif (k == 7 or k == 63): 	
@@ -234,6 +246,7 @@ def move(k):
                     exchange_piece(button_list[prev],button_list[k])
                     print("Xyz")
     
+                send_move(prev,k)
                 board.push_san(uci)
                 print(board)
                 
@@ -258,8 +271,9 @@ def move(k):
 
     x = not x    
     
-def initialize_board(button_list,window):
+def initialize_board():
 
+    print("Initializing board wait!!!")
     highest = 450
     k=0
     for i in range(8):
@@ -269,16 +283,16 @@ def initialize_board(button_list,window):
             
             k = 8*i +j
             if (i+j)%2 == 0:
-                button_list.append(tk.Button(window,bg='#8af542',text=str(8*i+j),command = lambda k=k: move(k)))
+                button_list.append(tk.Button(window,bg='#8af542',text=str(8*i+j),command = lambda k=k: my_move(k)))
             else:
-                button_list.append(tk.Button(window,bg='white',text=str(8*i+j),command = lambda k=k: move(k)))
+                button_list.append(tk.Button(window,bg='white',text=str(8*i+j),command = lambda k=k: my_move(k)))
 
             button_list[k].place(height=50,width=50, x=left_most, y=highest)
             left_most+=50
 
         highest-=50
 
-def initialize_chess(chess_list,button_list,window):
+def initialize_chess():
     for i in range(16):
         chess_list.append(i)
     for i in range(48,64):
@@ -310,37 +324,75 @@ def initialize_chess(chess_list,button_list,window):
                        "bk":"alpha/bk.png",
                        "bpawn":"alpha/bp1.jpg"}
     
-    assign_new_piece(button_list[0],png_path["wr"])
-    assign_new_piece(button_list[1],png_path["wn"])
-    assign_new_piece(button_list[2],png_path["wb"])
-    assign_new_piece(button_list[3],png_path["wq"])
-    assign_new_piece(button_list[4],png_path["wk"])
-    assign_new_piece(button_list[5],png_path["wb"])
-    assign_new_piece(button_list[6],png_path["wn"])
-    assign_new_piece(button_list[7],png_path["wr"])
+    if (color_val == True):
+        print("Initializing for white man!!!")
+        assign_new_piece(button_list[0],png_path["wr"])
+        assign_new_piece(button_list[1],png_path["wn"])
+        assign_new_piece(button_list[2],png_path["wb"])
+        assign_new_piece(button_list[3],png_path["wq"])
+        assign_new_piece(button_list[4],png_path["wk"])
+        assign_new_piece(button_list[5],png_path["wb"])
+        assign_new_piece(button_list[6],png_path["wn"])
+        assign_new_piece(button_list[7],png_path["wr"])
 
-    for i in range(8):
-        assign_new_piece(button_list[8+i],png_path["wp"])
-        assign_new_piece(button_list[48+i],png_path["bpawn"])
+        for i in range(8):
+            assign_new_piece(button_list[8+i],png_path["wp"])
+            assign_new_piece(button_list[48+i],png_path["bpawn"])
 
-    assign_new_piece(button_list[56],png_path["br"])
-    assign_new_piece(button_list[57],png_path["bn"])
-    assign_new_piece(button_list[58],png_path["bb"])
-    assign_new_piece(button_list[59],png_path["bq"])
-    assign_new_piece(button_list[60],png_path["bk"])
-    assign_new_piece(button_list[61],png_path["bb"])
-    assign_new_piece(button_list[62],png_path["bn"])
-    assign_new_piece(button_list[63],png_path["br"])
+        assign_new_piece(button_list[56],png_path["br"])
+        assign_new_piece(button_list[57],png_path["bn"])
+        assign_new_piece(button_list[58],png_path["bb"])
+        assign_new_piece(button_list[59],png_path["bq"])
+        assign_new_piece(button_list[60],png_path["bk"])
+        assign_new_piece(button_list[61],png_path["bb"])
+        assign_new_piece(button_list[62],png_path["bn"])
+        assign_new_piece(button_list[63],png_path["br"])
+
+    if (color_val == False):
+        print("Initializing for black man!!!")
+        #board.apply_mirror()
+        assign_new_piece(button_list[56],png_path["wr"])
+        assign_new_piece(button_list[57],png_path["wn"])
+        assign_new_piece(button_list[58],png_path["wb"])
+        assign_new_piece(button_list[59],png_path["wq"])
+        assign_new_piece(button_list[60],png_path["wk"])
+        assign_new_piece(button_list[61],png_path["wb"])
+        assign_new_piece(button_list[62],png_path["wn"])
+        assign_new_piece(button_list[63],png_path["wr"])
+
+        for i in range(8):
+            assign_new_piece(button_list[48+i],png_path["wp"])
+            assign_new_piece(button_list[8+i],png_path["bpawn"])
+
+        assign_new_piece(button_list[0],png_path["br"])
+        assign_new_piece(button_list[1],png_path["bn"])
+        assign_new_piece(button_list[2],png_path["bb"])
+        assign_new_piece(button_list[3],png_path["bq"])
+        assign_new_piece(button_list[4],png_path["bk"])
+        assign_new_piece(button_list[5],png_path["bb"])
+        assign_new_piece(button_list[6],png_path["bn"])
+        assign_new_piece(button_list[7],png_path["br"])
     
-def main():
+def main(val,soc):
+    global color_val
+    color_val = val
+
+    global my_socket 
+    my_socket = soc
+
+    print("This is " + str(color_val))
+
     global window
     window = tk.Tk()
     window.title('Chess')
     window.geometry("960x540")
     window.resizable(False,False)
 
-    initialize_board(button_list,window)
-    initialize_chess(chess_list,button_list,window)
+    initialize_board()
+    initialize_chess()
+
+    if not color_val:
+        others_move()
 
     window.mainloop()
     
