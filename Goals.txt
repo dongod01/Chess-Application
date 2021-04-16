@@ -1,5 +1,36 @@
 1> complete gui , after the canvas chess is ready and moves ko design karo and then return the moves
 2> networking design karo
+3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 3> sound design karo
-4> multiplayer systeems ke baare mein socho time aur mann hai to 
+
 

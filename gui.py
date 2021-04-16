@@ -115,8 +115,8 @@ def others_move():
     str_other = my_socket.recv(1024).decode()
     str1,str2 = str_other.split(',')
     
-    prev = int(str1)
-    k = int(str2)
+    prev = 63 - int(str1)
+    k = 63 - int(str2)
 
     print(prev)
     print(k)
@@ -269,7 +269,9 @@ def my_move(k):
     
             prev = -1
 
-    x = not x    
+    x = not x   
+    if x:
+        others_move() 
     
 def initialize_board():
 
@@ -350,7 +352,7 @@ def initialize_chess():
 
     if (color_val == False):
         print("Initializing for black man!!!")
-        #board.apply_mirror()
+        board.apply_mirror()
         assign_new_piece(button_list[56],png_path["wr"])
         assign_new_piece(button_list[57],png_path["wn"])
         assign_new_piece(button_list[58],png_path["wb"])
@@ -394,7 +396,7 @@ def main(val,soc):
     if not color_val:
         others_move()
 
-    window.mainloop()
+    window.mainloop()    
     
 if __name__ == "__main__":
     main()
