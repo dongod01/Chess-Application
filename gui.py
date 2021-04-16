@@ -16,6 +16,8 @@ board = chess.Board()
 x = True
 #Even_clicks checker
 
+
+
 def promotion_check(prev,k):
     if chess_list.index(prev,0,32) in range(8,24):
         if (board.turn==True and k in range(56,64)):
@@ -23,6 +25,127 @@ def promotion_check(prev,k):
         elif (board.turn==False and k in range(0,8)):
             return 2
     return False
+
+def GUI_move_impl(prev,k):
+    
+    islegal=False
+    
+
+    '''If the move is legal'''
+    uci = generate_uci(prev,k)  
+    yuci = chess.Move.from_uci(uci)
+    
+    valpcheck = promotion_check(prev,k)
+    
+    if promotion_check(prev,k)==1 or promotion_check(prev,k)==2:
+                
+        print("Inisde promotion check")
+        
+        valpcheck = promotion_check(prev,k)
+        call_message_box()    
+        window.wait_window(pop)     # the function waits for the other window to close
+
+        if newp=='q' and valpcheck == 1:
+            assign_new_piece(button_list[prev],"alpha/wq.png")
+        elif newp=='r' and valpcheck == 1:
+            assign_new_piece(button_list[prev],"alpha/wr.png")
+        elif newp=='b' and valpcheck == 1:
+            assign_new_piece(button_list[prev],"alpha/wb.png")
+        elif newp=='n' and valpcheck == 1:
+            assign_new_piece(button_list[prev],"alpha/wn.png")
+        elif newp=='q' and valpcheck == 2:
+            assign_new_piece(button_list[prev],"alpha/bq.png")
+        elif newp=='r' and valpcheck == 2:
+            assign_new_piece(button_list[prev],"alpha/br.png")
+        elif newp=='b' and valpcheck == 2:
+            assign_new_piece(button_list[prev],"alpha/bb.png")
+        elif newp=='n' and valpcheck == 2:
+            assign_new_piece(button_list[prev],"alpha/bn.png")
+        
+        exchange_piece(button_list[prev],button_list[k])
+        uci += newp
+        islegal=True
+        send_move(prev,k)
+        board.push_san(uci)
+        print(board)           
+    
+    elif yuci in board.legal_moves:
+            
+        # First piece move
+        
+        print("Verifying move:")
+        
+        '''Standard algebraic notation san'''
+        
+        alpha = board.san(yuci)
+
+        if (board.is_castling(yuci)):
+            # Works fine
+            # 4 cases white-black and short castle-long castle
+            # True indicates white's turn'
+            
+            # These two checks work to include the case when the rook is clicked for castling
+            if 	 (k == 0 or k == 56):
+                k+=2
+
+            elif (k == 7 or k == 63): 	
+                k-=1  
+
+            exchange_piece(button_list[prev],button_list[k])
+            print("Inside castling")
+            
+            if alpha=="O-O" and board.turn==True:
+                exchange_piece(button_list[7],button_list[5])
+            elif alpha=="O-O" and board.turn==False:
+                exchange_piece(button_list[63],button_list[61])
+            elif alpha=="O-O-O" and board.turn==True:
+                exchange_piece(button_list[0],button_list[3])
+            elif alpha=="O-O-O" and board.turn==False:
+                exchange_piece(button_list[56],button_list[59]) 
+             
+
+        elif board.is_en_passant(yuci):
+            # Works fine
+            exchange_piece(button_list[prev],button_list[k])
+            print("Inside en passant")
+            mod = (k-prev)%8
+            if mod==7:
+                mod = -1
+            
+            delpawn = prev + mod
+            ind_del = chess_list.index(delpawn,0,32)
+            print("Deleting")
+            remove_piece(button_list[delpawn])
+        
+        elif board.is_capture(yuci):
+            # Write code
+            exchange_piece(button_list[prev],button_list[k])
+            print("Okok")
+
+        
+        else:
+            exchange_piece(button_list[prev],button_list[k])
+            print("Xyz")
+
+        send_move(prev,k)
+        board.push_san(uci)
+        print(board)
+        islegal=True
+        
+        try:
+            # Index of capturing piece
+            ind1 = chess_list.index(prev, 0, len(chess_list))
+            
+        except ValueError:
+            print("No piece in initial index in move function")
+        
+        # Index of captured piece
+        ind2 = chess_list.index(k, 0, len(chess_list)) if k in chess_list else -1
+        chess_list[ind1] = k
+        if ind2!=-1:
+            chess_list[ind2] = -1  #Making the captured piece -1 in chesslist
+        
+    return islegal
 
 def assign_new_piece(button,path):
     
@@ -118,17 +241,10 @@ def others_move():
     
     prev = 63 - int(str1)
     k = 63 - int(str2)
-
-    print(prev)
-    print(k)
-
-    print("this is " + str(prev) + "  " + str(k))
-
-    exchange_piece(button_list[prev],button_list[k])
-    uci = generate_uci(prev,k)
     
-    board.push_san(uci)
-    print(board)  
+    print("this is " + str(prev) + "  " + str(k))
+    
+    GUI_move_impl(prev,k)  
 
 def my_move(k):
     global x
@@ -154,125 +270,20 @@ def my_move(k):
             button_list[k].configure(bg = 'white')
 
         else: 
-            '''If the move is legal'''
-
-            uci = generate_uci(prev,k)  
-            yuci = chess.Move.from_uci(uci)
                         
-            if promotion_check(prev,k)==1 or promotion_check(prev,k)==2:
-                
-                print("Inisde promotion check")
-                
-                valpcheck = promotion_check(prev,k)
-                call_message_box()    
-                window.wait_window(pop)     # the function waits for the other window to close
+            if(GUI_move_impl(prev,k)):
 
-                if newp=='q' and valpcheck == 1:
-                    assign_new_piece(button_list[prev],"alpha/wq.png")
-                elif newp=='r' and valpcheck == 1:
-                    assign_new_piece(button_list[prev],"alpha/wr.png")
-                elif newp=='b' and valpcheck == 1:
-                    assign_new_piece(button_list[prev],"alpha/wb.png")
-                elif newp=='n' and valpcheck == 1:
-                    assign_new_piece(button_list[prev],"alpha/wn.png")
-                elif newp=='q' and valpcheck == 2:
-                    assign_new_piece(button_list[prev],"alpha/bq.png")
-                elif newp=='r' and valpcheck == 2:
-                    assign_new_piece(button_list[prev],"alpha/br.png")
-                elif newp=='b' and valpcheck == 2:
-                    assign_new_piece(button_list[prev],"alpha/bb.png")
-                elif newp=='n' and valpcheck == 2:
-                    assign_new_piece(button_list[prev],"alpha/bn.png")
-                
-                exchange_piece(button_list[prev],button_list[k])
-                uci += newp
-                
-                send_move(prev,k)
-                board.push_san(uci)
-                print(board)           
-            
-            elif yuci in board.legal_moves:
-                    
-                # First piece move
-                
-                print("Verifying move:")
-                
-                '''Standard algebraic notation san'''
-                
-                alpha = board.san(yuci)
+                reinstate_color(prev)
+        
+                reinstate_color(k)
+        
+                prev = -1
 
-                if (board.is_castling(yuci)):
-                    # Works fine
-                    # 4 cases white-black and short castle-long castle
-                    # True indicates white's turn'
-                    
-                    # These two checks work to include the case when the rook is clicked for castling
-                    if 	 (k == 0 or k == 56):
-                        k+=2
-
-                    elif (k == 7 or k == 63): 	
-                        k-=1  
-
-                    exchange_piece(button_list[prev],button_list[k])
-                    print("Inside castling")
-                    
-                    if alpha=="O-O" and board.turn==True:
-                        exchange_piece(button_list[7],button_list[5])
-                    elif alpha=="O-O" and board.turn==False:
-                        exchange_piece(button_list[63],button_list[61])
-                    elif alpha=="O-O-O" and board.turn==True:
-                        exchange_piece(button_list[0],button_list[3])
-                    elif alpha=="O-O-O" and board.turn==False:
-                        exchange_piece(button_list[56],button_list[59])  
-    
-                elif board.is_en_passant(yuci):
-                    # Works fine
-                    exchange_piece(button_list[prev],button_list[k])
-                    print("Inside en passant")
-                    mod = (k-prev)%8
-                    if mod==7:
-                        mod = -1
-                    
-                    delpawn = prev + mod
-                    ind_del = chess_list.index(delpawn,0,32)
-                    print("Deleting")
-                    remove_piece(button_list[delpawn])
-                
-                elif board.is_capture(yuci):
-                    # Write code
-                    exchange_piece(button_list[prev],button_list[k])
-                    print("Okok")
-                
-                else:
-                    exchange_piece(button_list[prev],button_list[k])
-                    print("Xyz")
-    
-                send_move(prev,k)
-                board.push_san(uci)
-                print(board)
-                
-                try:
-                    # Index of capturing piece
-                    ind1 = chess_list.index(prev, 0, len(chess_list))
-                    
-                except ValueError:
-                    print("No piece in initial index in move function")
-                
-                # Index of captured piece
-                ind2 = chess_list.index(k, 0, len(chess_list)) if k in chess_list else -1
-                chess_list[ind1] = k
-                if ind2!=-1:
-                    chess_list[ind2] = -1  #Making the captured piece -1 in chesslist
-                
-            reinstate_color(prev)
-    
-            reinstate_color(k)
-    
-            prev = -1
+                threading.Thread(target=others_move).start()
 
     x = not x   
-    if x:
-        threading.Thread(target=others_move).start()
+    
+    
     
 def initialize_board():
 
@@ -390,7 +401,7 @@ def main(val,soc):
     window = tk.Tk()
     window.title('Chess')
     window.geometry("960x540")
-    window.resizable(False,False)
+    window.resizable(True,True)
 
     initialize_board()
     initialize_chess()
