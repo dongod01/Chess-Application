@@ -6,6 +6,7 @@ import chess
 import tkinter as tk
 from PIL import Image, ImageTk
 import time
+import threading
 
 button_list = []
 chess_list = []
@@ -271,7 +272,7 @@ def my_move(k):
 
     x = not x   
     if x:
-        others_move() 
+        threading.Thread(target=others_move).start()
     
 def initialize_board():
 
@@ -394,7 +395,7 @@ def main(val,soc):
     initialize_chess()
 
     if not color_val:
-        others_move()
+        threading.Thread(target=others_move).start()
 
     window.mainloop()    
     
