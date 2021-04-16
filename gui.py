@@ -357,6 +357,7 @@ def initialize_chess():
         assign_new_piece(button_list[56],png_path["wr"])
         assign_new_piece(button_list[57],png_path["wn"])
         assign_new_piece(button_list[58],png_path["wb"])
+        '''New comment'''
         assign_new_piece(button_list[59],png_path["wk"])
         assign_new_piece(button_list[60],png_path["wq"])
         assign_new_piece(button_list[61],png_path["wb"])
