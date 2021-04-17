@@ -19,47 +19,43 @@ x = True
 
 def promotion_check(prev,k):
     if chess_list.index(prev,0,32) in range(8,24):
-        if (board.turn==True and k in range(56,64)):
-            return 1
-        elif (board.turn==False and k in range(0,8)):
-            return 2
+        if (k in range(56,64)):
+            return True
     return False
 
 def GUI_move_impl(prev,k):
+    
     islegal=False
-
     '''If the move is legal'''
+    
     print("this is "+str(prev) +" and " + str(k))
     uci = generate_uci(prev,k)  
     yuci = chess.Move.from_uci(uci)
     
-    valpcheck = promotion_check(prev,k)
-    
-    if promotion_check(prev,k)==1 or promotion_check(prev,k)==2:
+    if promotion_check(prev,k):
                 
         print("Inisde promotion check")
         
-        valpcheck = promotion_check(prev,k)
         call_message_box()    
         window.wait_window(pop)     # the function waits for the other window to close
 
-        if newp=='q' and valpcheck == 1:
-            assign_new_piece(button_list[prev],"alpha/wq.png")
-        elif newp=='r' and valpcheck == 1:
-            assign_new_piece(button_list[prev],"alpha/wr.png")
-        elif newp=='b' and valpcheck == 1:
-            assign_new_piece(button_list[prev],"alpha/wb.png")
-        elif newp=='n' and valpcheck == 1:
-            assign_new_piece(button_list[prev],"alpha/wn.png")
-        elif newp=='q' and valpcheck == 2:
-            assign_new_piece(button_list[prev],"alpha/bq.png")
-        elif newp=='r' and valpcheck == 2:
-            assign_new_piece(button_list[prev],"alpha/br.png")
-        elif newp=='b' and valpcheck == 2:
-            assign_new_piece(button_list[prev],"alpha/bb.png")
-        elif newp=='n' and valpcheck == 2:
-            assign_new_piece(button_list[prev],"alpha/bn.png")
-        
+        if newp=='q' and color_val:
+                assign_new_piece(button_list[prev],"alpha/wq.png")
+        elif newp=='r' and color_val:
+                assign_new_piece(button_list[prev],"alpha/wr.png")
+        elif newp=='b' and color_val:
+                assign_new_piece(button_list[prev],"alpha/wb.png")
+        elif newp=='n' and color_val:
+                assign_new_piece(button_list[prev],"alpha/wn.png")
+        elif newp=='q' and not color_val:
+                assign_new_piece(button_list[prev],"alpha/bq.png")
+        elif newp=='r' and not color_val:
+                assign_new_piece(button_list[prev],"alpha/br.png")
+        elif newp=='b' and not color_val:
+                assign_new_piece(button_list[prev],"alpha/bb.png")
+        elif newp=='n' and not color_val:
+                assign_new_piece(button_list[prev],"alpha/bn.png")
+            
         exchange_piece(button_list[prev],button_list[k])
         uci += newp
         islegal=True
@@ -193,7 +189,7 @@ def call_message_box():
     global pop
     pop = tk.Toplevel(window)
     pop.geometry("50x200")
-    if (board.turn == True):
+    if (color_val):
         button1 = tk.Button(pop,bg='white',command = lambda : func_return('q'))
         button1.place(height=50,width=50, x=0, y=0)
         assign_new_piece(button1,"alpha/wq.png")
@@ -231,17 +227,22 @@ def send_move(prev,k):
     my_socket.sendall(resultant_string.encode())
 
 def others_move():
-    str_other = my_socket.recv(1024).decode()
-    str1,str2 = str_other.split(',')
-        
-    prev = 63 - int(str1)
-    k = 63 - int(str2)
-        
-    print("this is in others move " + str(prev) + "  " + str(k))
-    print("the thread count is " + str(threading.active_count()))
+    global lock
+    lock.acquire()
+    try:
+        str_other = my_socket.recv(1024).decode()
+        str1,str2 = str_other.split(',')
+            
+        prev = 63 - int(str1)
+        k = 63 - int(str2)
+            
+        print("this is in others move " + str(prev) + "  " + str(k))
+        print("the thread count is " + str(threading.active_count()))
 
-    GUI_move_impl(prev,k)
-    
+        GUI_move_impl(prev,k)
+    finally:
+        lock.release()
+
 def my_move(k):
     global x
     global prev
