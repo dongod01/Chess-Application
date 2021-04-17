@@ -8,9 +8,12 @@ Created on Thu Mar  4 10:38:57 2021
 import chess
 board  = chess.Board()
 
-board.push_san("a4")
+board.push_san("c3")
+board.push_san("Nc6")
 
-board.push_san("a5")
+
+
+'''board.push_san("a5")
 board.push_san("b4")
 board.push_san("axb4")
 board.push_san("a5")
@@ -21,7 +24,11 @@ board.push_san("a6")
 board.push_san("b6")
 board.push_san("a7")
 board.push_san("g6")
-alpha1 = board.san("")
+alpha1 = board.san("")'''
+print(board)
+
+board.apply_transform(chess.flip_horizontal)
+board.apply_transform(chess.flip_vertical)
 
 print(board.legal_moves)
 
