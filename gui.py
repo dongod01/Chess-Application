@@ -17,7 +17,6 @@ x = True
 #Even_clicks checker
 
 
-
 def promotion_check(prev,k):
     if chess_list.index(prev,0,32) in range(8,24):
         if (board.turn==True and k in range(56,64)):
@@ -27,11 +26,10 @@ def promotion_check(prev,k):
     return False
 
 def GUI_move_impl(prev,k):
-    
     islegal=False
-    
 
     '''If the move is legal'''
+    print("this is "+str(prev) +" and " + str(k))
     uci = generate_uci(prev,k)  
     yuci = chess.Move.from_uci(uci)
     
@@ -65,7 +63,6 @@ def GUI_move_impl(prev,k):
         exchange_piece(button_list[prev],button_list[k])
         uci += newp
         islegal=True
-        send_move(prev,k)
         board.push_san(uci)
         print(board)           
     
@@ -77,8 +74,6 @@ def GUI_move_impl(prev,k):
         
         '''Standard algebraic notation san'''
         
-        alpha = board.san(yuci)
-
         if (board.is_castling(yuci)):
             # Works fine
             # 4 cases white-black and short castle-long castle
@@ -91,6 +86,7 @@ def GUI_move_impl(prev,k):
             elif (k == 7 or k == 63): 	
                 k-=1  
 
+            alpha = board.san(yuci)
             exchange_piece(button_list[prev],button_list[k])
             print("Inside castling")
             
@@ -127,7 +123,6 @@ def GUI_move_impl(prev,k):
             exchange_piece(button_list[prev],button_list[k])
             print("Xyz")
 
-        send_move(prev,k)
         board.push_san(uci)
         print(board)
         islegal=True
@@ -238,14 +233,15 @@ def send_move(prev,k):
 def others_move():
     str_other = my_socket.recv(1024).decode()
     str1,str2 = str_other.split(',')
-    
+        
     prev = 63 - int(str1)
     k = 63 - int(str2)
-    
-    print("this is " + str(prev) + "  " + str(k))
-    
-    GUI_move_impl(prev,k)  
+        
+    print("this is in others move " + str(prev) + "  " + str(k))
+    print("the thread count is " + str(threading.active_count()))
 
+    GUI_move_impl(prev,k)
+    
 def my_move(k):
     global x
     global prev
@@ -272,18 +268,15 @@ def my_move(k):
         else: 
                         
             if(GUI_move_impl(prev,k)):
-
                 reinstate_color(prev)
-        
                 reinstate_color(k)
-        
+                
+                send_move(prev,k)
+                threading.Thread(target=others_move).start()
+                
                 prev = -1
 
-                threading.Thread(target=others_move).start()
-
     x = not x   
-    
-    
     
 def initialize_board():
 
@@ -394,6 +387,9 @@ def main(val,soc):
 
     global my_socket 
     my_socket = soc
+
+    global lock
+    lock = threading.Lock()
 
     print("This is " + str(color_val))
 
