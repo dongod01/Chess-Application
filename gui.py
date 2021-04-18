@@ -169,6 +169,9 @@ def GUI_move_impl(prev,k):
         uci += newp
         islegal=True
         board.push_san(uci)
+
+        print(chess_list)
+
         print(board)           
     
     elif yuci in board.legal_moves:
@@ -200,25 +203,25 @@ def GUI_move_impl(prev,k):
                 chess_list[7] = 5
             elif alpha=="O-O" and board.turn==True and not color_val:
                 exchange_piece(button_list[56],button_list[58])
-                chess_list[56] = 58
-            elif alpha=="O-O" and board.turn==False:
+                chess_list[24] = 58
+            elif alpha=="O-O" and board.turn==False and color_val:
                 exchange_piece(button_list[63],button_list[61])
                 chess_list[31] = 61
             elif alpha=="O-O" and board.turn==False and not color_val:
                 exchange_piece(button_list[0],button_list[2])
                 chess_list[0] = 2
-            elif alpha=="O-O-O" and board.turn==True:
+            elif alpha=="O-O-O" and board.turn==True and color_val:
                 exchange_piece(button_list[0],button_list[3])
                 chess_list[0] = 3
-            elif alpha=="O-O-O" and board.turn==False and not color_val:
+            elif alpha=="O-O-O" and board.turn==True and not color_val:
                 exchange_piece(button_list[63],button_list[60])
                 chess_list[31] = 60
-            elif alpha=="O-O-O" and board.turn==False:
+            elif alpha=="O-O-O" and board.turn==False and color_val:
                 exchange_piece(button_list[56],button_list[59]) 
                 chess_list[24] = 59
-            elif alpha=="O-O-O" and board.turn==True and not color_val:
+            elif alpha=="O-O-O" and board.turn==False and not color_val:
                 exchange_piece(button_list[7],button_list[4])
-                chess_list[24] = 58
+                chess_list[7] = 4
              
 
         elif board.is_en_passant(yuci):
@@ -261,6 +264,8 @@ def GUI_move_impl(prev,k):
 
         if ind2!=-1:
             chess_list[ind2] = -1  #Making the captured piece -1 in chesslist
+
+        print(chess_list)
         
     return islegal
 
@@ -307,6 +312,8 @@ def my_move(k):
                 reinstate_color(prev)
                 reinstate_color(k)
                 
+                
+
                 send_move(prev,k)
                 threading.Thread(target=others_move).start()
                 

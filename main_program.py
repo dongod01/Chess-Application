@@ -7,7 +7,7 @@
 import gui
 import socket
 
-def negotitiate_color():	## 1 is white and 0 is black
+def negotitiate_color():	## True is white and false is black
 	global color_val
 
 	while (True):
