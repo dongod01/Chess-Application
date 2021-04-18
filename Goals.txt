@@ -8,7 +8,7 @@ Fix promotion: Add flag/parameter to GUI_imple to indicate others_move/my_move
 
 
 
-
+Create more files/proper inclusion
 
 
 
