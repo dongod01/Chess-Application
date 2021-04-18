@@ -60,7 +60,7 @@ def generate_uci(i,j):
     s1+= sqr_notation(j)
     
     print("this is the uci "+ s1)
-    y = chess.Move.from_uci(s1)
+    
     return s1
 
 def func_return(string1): 
@@ -116,12 +116,12 @@ def GUI_move_impl(prev,k):
     
     print("this is "+str(prev) +" and " + str(k))
     
-    '''if color_val:
+    if color_val:
         uci = generate_uci(prev,k)
     else:
-        uci = generate_uci(63-prev,63-k)'''
+        uci = generate_uci(63-prev,63-k)
 
-    uci = generate_uci(prev,k)
+    #uci = generate_uci(prev,k)
      
     yuci = chess.Move.from_uci(uci)
     print(board.legal_moves)
@@ -195,18 +195,30 @@ def GUI_move_impl(prev,k):
             exchange_piece(button_list[prev],button_list[k])
             print("Inside castling")
             
-            if alpha=="O-O" and board.turn==True:
+            if alpha=="O-O" and board.turn==True and color_val:
                 exchange_piece(button_list[7],button_list[5])
                 chess_list[7] = 5
+            elif alpha=="O-O" and board.turn==True and not color_val:
+                exchange_piece(button_list[56],button_list[58])
+                chess_list[56] = 58
             elif alpha=="O-O" and board.turn==False:
                 exchange_piece(button_list[63],button_list[61])
                 chess_list[31] = 61
+            elif alpha=="O-O" and board.turn==False and not color_val:
+                exchange_piece(button_list[0],button_list[2])
+                chess_list[0] = 2
             elif alpha=="O-O-O" and board.turn==True:
                 exchange_piece(button_list[0],button_list[3])
                 chess_list[0] = 3
+            elif alpha=="O-O-O" and board.turn==False and not color_val:
+                exchange_piece(button_list[63],button_list[60])
+                chess_list[31] = 60
             elif alpha=="O-O-O" and board.turn==False:
                 exchange_piece(button_list[56],button_list[59]) 
                 chess_list[24] = 59
+            elif alpha=="O-O-O" and board.turn==True and not color_val:
+                exchange_piece(button_list[7],button_list[4])
+                chess_list[24] = 58
              
 
         elif board.is_en_passant(yuci):
@@ -329,19 +341,6 @@ def initialize_chess():
     for i in range(48,64):
         chess_list.append(i)
     
-    file_path = {      "wr":"merida_chess_set/wr.svg",
-                       "wn":"merida_chess_set/wn.svg",
-                       "wb":"merida_chess_set/wb.svg",
-                       "wq":"merida_chess_set/wq.svg",
-                       "wk":"merida_chess_set/wk.svg",
-                       "wp":"merida_chess_set/wp.svg",
-                       "br":"merida_chess_set/br.svg",
-                       "bn":"merida_chess_set/bn.svg",
-                       "bb":"merida_chess_set/bb.svg",
-                       "bq":"merida_chess_set/bq.svg",
-                       "bk":"merida_chess_set/bk.svg",
-                       "bp":"merida_chess_set/bp.svg"}
-    
     png_path = {       "wr":"alpha/wr.png",
                        "wn":"alpha/wn.png",
                        "wb":"alpha/wb.png",
@@ -384,7 +383,10 @@ def initialize_chess():
         
         #board.apply_transform(chess.flip_horizontal)
         #board.apply_transform(chess.flip_vertical)
-        board.apply_mirror()
+        
+        #Mirror is WRONG, no second thoughts
+        
+        #board.apply_mirror()
         #board.apply_transform(chess.flip_horizontal)
 
         '''Black needs to know he's not playing from white side on library board'''
