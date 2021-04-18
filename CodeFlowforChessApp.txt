@@ -1,0 +1,21 @@
+White:
+main_program -> gui.main() 
+Constant : board(no flips/transforms)
+loop -> my_move() -> GuiImpl -> send_move()-> others_move() (new thread) -> 
+
+                    k   prev    uci    
+White moves c2c3 - 18    10       
+
+
+main_program -> gui.main() -> others_move()
+loop -> my_move() -> GuiImpl -> send_move()-> others_move() (new thread) -> 
+
+
+t - not promotion
+
+n
+r
+b
+q
+
+

@@ -17,8 +17,8 @@ board = chess.Board()
 x = True
 #Even_clicks checker
 def promotion_check(prev,k):
-    if chess_list.index(prev,0,32) in range(8,24):
-        if (k in range(56,64)):
+    if chess_list.index(prev) in range(8,16):
+        if ( k in range(56,64) ):
             return True
     return False
 
@@ -105,12 +105,13 @@ def call_message_box():
         button4.place(height=50,width=50, x=0, y=150)
         assign_new_piece(button4,"alpha/br.png")
 
-def send_move(prev,k):
-    resultant_string = str(prev) + "," + str(k)
+def send_move(prev,k,prom_char):    
+    resultant_string = str(prev) + "," + str(k)+ "," + prom_char
     my_socket.sendall(resultant_string.encode())
 
-def GUI_move_impl(prev,k):
-    
+def GUI_move_impl(prev,k,prom_char):
+    global newp
+    newp=prom_char
     islegal=False
     '''If the move is legal'''
     
@@ -129,27 +130,46 @@ def GUI_move_impl(prev,k):
     if promotion_check(prev,k):
                 
         print("Inside promotion check")
-        
-        call_message_box()    
-        window.wait_window(pop)     # the function waits for the other window to close
+        if (prom_char == 't'):
+            call_message_box()    
+            window.wait_window(pop)     # the function waits for the other window to close
 
-        if newp=='q' and color_val:
-                assign_new_piece(button_list[prev],"alpha/wq.png")
-        elif newp=='r' and color_val:
-                assign_new_piece(button_list[prev],"alpha/wr.png")
-        elif newp=='b' and color_val:
-                assign_new_piece(button_list[prev],"alpha/wb.png")
-        elif newp=='n' and color_val:
-                assign_new_piece(button_list[prev],"alpha/wn.png")
-        elif newp=='q' and not color_val:
-                assign_new_piece(button_list[prev],"alpha/bq.png")
-        elif newp=='r' and not color_val:
-                assign_new_piece(button_list[prev],"alpha/br.png")
-        elif newp=='b' and not color_val:
-                assign_new_piece(button_list[prev],"alpha/bb.png")
-        elif newp=='n' and not color_val:
-                assign_new_piece(button_list[prev],"alpha/bn.png")
-            
+            if newp=='q' and color_val:
+                    assign_new_piece(button_list[prev],"alpha/wq.png")
+            elif newp=='r' and color_val:
+                    assign_new_piece(button_list[prev],"alpha/wr.png")
+            elif newp=='b' and color_val:
+                    assign_new_piece(button_list[prev],"alpha/wb.png")
+            elif newp=='n' and color_val:
+                    assign_new_piece(button_list[prev],"alpha/wn.png")
+            elif newp=='q' and not color_val:
+                    assign_new_piece(button_list[prev],"alpha/bq.png")
+            elif newp=='r' and not color_val:
+                    assign_new_piece(button_list[prev],"alpha/br.png")
+            elif newp=='b' and not color_val:
+                    assign_new_piece(button_list[prev],"alpha/bb.png")
+            elif newp=='n' and not color_val:
+                    assign_new_piece(button_list[prev],"alpha/bn.png")
+            uci += newp
+        else:
+            uci += prom_char
+            if prom_char=='q' and not color_val:
+                    assign_new_piece(button_list[prev],"alpha/wq.png")
+            elif prom_char=='r' and not color_val:
+                    assign_new_piece(button_list[prev],"alpha/wr.png")
+            elif prom_char=='b' and not color_val:
+                    assign_new_piece(button_list[prev],"alpha/wb.png")
+            elif prom_char=='n' and not color_val:
+                    assign_new_piece(button_list[prev],"alpha/wn.png")
+            elif prom_char=='q' and color_val:
+                    assign_new_piece(button_list[prev],"alpha/bq.png")
+            elif prom_char=='r' and color_val:
+                    assign_new_piece(button_list[prev],"alpha/br.png")
+            elif prom_char=='b' and color_val:
+                    assign_new_piece(button_list[prev],"alpha/bb.png")
+            elif prom_char=='n' and color_val:
+                    assign_new_piece(button_list[prev],"alpha/bn.png")
+        
         exchange_piece(button_list[prev],button_list[k])
         
         try:
@@ -166,8 +186,9 @@ def GUI_move_impl(prev,k):
         if ind2!=-1:
             chess_list[ind2] = -1  #Making the captured piece -1 in chesslist
         
-        uci += newp
+       
         islegal=True
+
         board.push_san(uci)
 
         print(chess_list)
@@ -267,14 +288,14 @@ def GUI_move_impl(prev,k):
 
         print(chess_list)
         
-    return islegal
+    return islegal,newp
 
 def others_move():
     global lock
     lock.acquire()
     try:
         str_other = my_socket.recv(1024).decode()
-        str1,str2 = str_other.split(',')
+        str1,str2,str3 = str_other.split(',')
             
         prev = 63 - int(str1)
         k = 63 - int(str2)
@@ -282,7 +303,7 @@ def others_move():
         print("this is in others move " + str(prev) + "  " + str(k))
         print("the thread count is " + str(threading.active_count()))
 
-        GUI_move_impl(prev,k)
+        GUI_move_impl(prev,k,str3)
     finally:
         lock.release()
 
@@ -291,7 +312,8 @@ def my_move(k):
     global prev
     
     if x:
-        if (k in chess_list):
+        ind4 = chess_list.index(k)
+        if (ind4 in range(0,16)):   
             prev = k
             print(k)
             button_list[k].configure(bg = 'green')
@@ -307,14 +329,14 @@ def my_move(k):
             button_list[k].configure(bg = 'white')
 
         else: 
-                        
-            if(GUI_move_impl(prev,k)):
+            ret1,ret2 = GUI_move_impl(prev,k,'t')         
+            if(ret1):
                 reinstate_color(prev)
                 reinstate_color(k)
                 
                 
 
-                send_move(prev,k)
+                send_move(prev,k,ret2)
                 threading.Thread(target=others_move).start()
                 
                 prev = -1
@@ -447,5 +469,3 @@ def main(val,soc):
 
     window.mainloop()    
     
-if __name__ == "__main__":
-    main()
