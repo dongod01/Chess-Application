@@ -16,9 +16,12 @@ board = chess.Board()
 
 x = True
 #Even_clicks checker
-def promotion_check(prev,k):
+def promotion_check(prev,k,called_from):
     if chess_list.index(prev) in range(8,16):
-        if ( k in range(56,64) ):
+        if ( k in range(56,64) ) and (called_from):
+            return True
+    if chess_list.index(prev) in range(16,24):
+        if ( k in range(0,8) ) and (not called_from):
             return True
     return False
 
@@ -109,7 +112,7 @@ def send_move(prev,k,prom_char):
     resultant_string = str(prev) + "," + str(k)+ "," + prom_char
     my_socket.sendall(resultant_string.encode())
 
-def GUI_move_impl(prev,k,prom_char):
+def GUI_move_impl(prev,k,prom_char,called_from):
     global newp
     newp=prom_char
     islegal=False
@@ -127,7 +130,7 @@ def GUI_move_impl(prev,k,prom_char):
     yuci = chess.Move.from_uci(uci)
     print(board.legal_moves)
     
-    if promotion_check(prev,k):
+    if promotion_check(prev,k,called_from):
                 
         print("Inside promotion check")
         if (prom_char == 't'):
@@ -303,7 +306,7 @@ def others_move():
         print("this is in others move " + str(prev) + "  " + str(k))
         print("the thread count is " + str(threading.active_count()))
 
-        GUI_move_impl(prev,k,str3)
+        GUI_move_impl(prev,k,str3,False)
     finally:
         lock.release()
 
@@ -329,7 +332,7 @@ def my_move(k):
             button_list[k].configure(bg = 'white')
 
         else: 
-            ret1,ret2 = GUI_move_impl(prev,k,'t')         
+            ret1,ret2 = GUI_move_impl(prev,k,'t',True)         
             if(ret1):
                 reinstate_color(prev)
                 reinstate_color(k)
