@@ -12,10 +12,53 @@ import threading
 button_list = []
 chess_list = []
 
+
+
 board = chess.Board()
 
 x = True
 #Even_clicks checker
+
+def position_checker(called_from):
+    if(not board.turn):
+            s="White"
+    else:
+            s="Black"
+    
+
+    if board.is_checkmate():
+        if called_from:
+            name_label3["text"] = "Checkmate! You win :)"
+        else:
+            name_label3["text"] = "Checkmate! Opponent wins :("
+        
+        print("\n\n\n")
+        print("Checkmate! " +s+ " wins!" )
+        print("#########################################################")
+        print("\n\n\n")
+    elif board.is_stalemate():
+        name_label3["text"] = "Stalemate -  Game ends in a draw."
+        print("\n\n\n")
+        print("Stalemate -  Game ends in a draw." )
+        print("#########################################################")
+        print("\n\n\n")
+    elif board.is_repetition():
+        name_label3["text"] = "Threefold Repetition -  Game ends in a draw."
+        print("\n\n\n")
+        print("Threefold Repetition -  Game ends in a draw." )
+        print("#########################################################")
+        print("\n\n\n")
+    elif board.is_fifty_moves():
+        name_label3["text"] = "50 move rule -  Game ends in a draw."
+        print("\n\n\n")    
+        print("50 move rule - Game ends in a draw." )
+        print("#########################################################")
+        print("\n\n\n")
+    elif board.is_insufficient_material():
+        name_label3["text"] = "Insufficient -  Game ends in a draw."
+        print("Insufficient material for checkmate - Game ends in a draw." )
+        print("#########################################################")
+
 def promotion_check(prev,k,called_from):
     if chess_list.index(prev) in range(8,16):
         if ( k in range(56,64) ) and (called_from):
@@ -290,7 +333,9 @@ def GUI_move_impl(prev,k,prom_char,called_from):
             chess_list[ind2] = -1  #Making the captured piece -1 in chesslist
 
         print(chess_list)
-        
+
+    position_checker(called_from)
+
     return islegal,newp
 
 def others_move():
@@ -305,7 +350,7 @@ def others_move():
             
         print("this is in others move " + str(prev) + "  " + str(k))
         print("the thread count is " + str(threading.active_count()))
-
+        name_label4["text"] = "Your Move"
         GUI_move_impl(prev,k,str3,False)
     finally:
         lock.release()
@@ -332,6 +377,7 @@ def my_move(k):
             button_list[k].configure(bg = 'white')
 
         else: 
+            name_label4["text"] = "Opponent's Move"
             ret1,ret2 = GUI_move_impl(prev,k,'t',True)         
             if(ret1):
                 reinstate_color(prev)
@@ -346,14 +392,14 @@ def my_move(k):
 
     x = not x   
     
-def initialize_board():
-
+def initialize_board(name1,name2):
+    global name_label3,name_label4
     print("Initializing board wait!!!")
     highest = 450
     k=0
     for i in range(8):
         
-        left_most = 280
+        left_most = 50
         for j in range(8):
             
             k = 8*i +j
@@ -366,6 +412,19 @@ def initialize_board():
             left_most+=50
 
         highest-=50
+
+    name_label1 = tk.Label( window, text=name1+ "(you)",font = ("Arial",12))
+    name_label2 = tk.Label( window, text=name2+ "(opponent)",font = ("Arial",12))
+    name_label3 = tk.Label( window, text="Match Ongoing",font = ("Arial",12))
+    name_label4 = tk.Label( window, text="Your move",font = ("Arial",12))
+
+    
+
+    name_label1.place(height=100,width=300, x=500, y=400)
+    name_label2.place(height=100,width=300, x=500, y=100)
+    name_label3.place(height=100,width=300, x=500, y=200)
+    name_label4.place(height=100,width=300, x=500, y=300)
+
 
 def initialize_chess():
     for i in range(16):
@@ -446,7 +505,7 @@ def initialize_chess():
         assign_new_piece(button_list[6],png_path["bn"])
         assign_new_piece(button_list[7],png_path["br"])
     
-def main(val,soc):
+def main(val,soc,name1,name2):
     global color_val
     color_val = val
 
@@ -464,7 +523,11 @@ def main(val,soc):
     window.geometry("960x540")
     window.resizable(True,True)
 
-    initialize_board()
+    print("*********************************************************")
+    print("*********************************************************")
+    print("*********************************************************")
+
+    initialize_board(name1,name2)
     initialize_chess()
 
     if not color_val:

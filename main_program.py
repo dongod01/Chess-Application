@@ -9,11 +9,19 @@ import socket
 
 def negotitiate_color():	## True is white and false is black
 	global color_val
+	global name1,name2
 
 	while (True):
+		print("What is your name")
+		name1 = input()
+		my_socket.sendall(name1.encode())
+
+		name2 = my_socket.recv(1024).decode()
+		
 		print("What color do you want ??? Please enter b/B or w/W")
 		color1 = input()
 		my_socket.sendall(color1.encode())
+		
 		color2 = my_socket.recv(1024).decode()
 
 		if ((color1 == 'b' or color1 == 'B') and (color2 == 'w'or color2 == 'W')):
@@ -61,7 +69,7 @@ def main():
 	networking()
 	negotitiate_color()
 	print(color_val)
-	gui.main(color_val,my_socket)
+	gui.main(color_val,my_socket,name1,name2)
 	
 if __name__ == "__main__":
     main()
