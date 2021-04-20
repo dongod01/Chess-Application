@@ -350,7 +350,10 @@ def others_move():
             
         print("this is in others move " + str(prev) + "  " + str(k))
         print("the thread count is " + str(threading.active_count()))
-        name_label4["text"] = "Your Move"
+        if color_val:
+            name_label4["text"] = "Opponent's Move"
+        else:
+            name_label4["text"] = "Your Move"
         GUI_move_impl(prev,k,str3,False)
     finally:
         lock.release()
@@ -377,7 +380,10 @@ def my_move(k):
             button_list[k].configure(bg = 'white')
 
         else: 
-            name_label4["text"] = "Opponent's Move"
+            if color_val:
+                name_label4["text"] = "Opponent's Move"
+            else:
+                name_label4["text"] = "Your Move"
             ret1,ret2 = GUI_move_impl(prev,k,'t',True)         
             if(ret1):
                 reinstate_color(prev)
