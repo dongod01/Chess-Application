@@ -13,14 +13,10 @@ def GUI_move_impl(prev,k,prom_char,called_from):
         uci = generate_uci(prev,k)
     else:
         uci = generate_uci(63-prev,63-k)
-
-    #uci = generate_uci(prev,k)
      
     yuci = chess.Move.from_uci(uci)
     print(globals.board.legal_moves)
 
-
-    
     if promotion_check(prev,k,called_from):
         uci1 = uci + 'q'
         yuci1 = chess.Move.from_uci(uci1)
