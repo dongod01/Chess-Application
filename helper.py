@@ -63,11 +63,11 @@ def assign_new_piece(button,path):
     button.config(image=ph)
     button.image = ph    
 
-def reinstate_color(prev):
-    if (prev//8 + prev %8)%2==0:
-        globals.button_list[globals.prev].configure(bg = '#8af542')
+def reinstate_color(box_index):
+    if (box_index//8 + box_index %8)%2==0:
+        globals.button_list[box_index].configure(bg = '#8af542')
     else:
-        globals.button_list[globals.prev].configure(bg = 'white')
+        globals.button_list[box_index].configure(bg = 'white')
 
 def sqr_notation(i):
     if i<=63:
@@ -96,42 +96,41 @@ def generate_uci(i,j):
 
 def func_return(string1):                 
     globals.newp = string1
-    pop.destroy()
+    globals.pop.destroy()
 
 def call_message_box():
-    global pop
-    pop = tk.Toplevel(globals.window)
-    pop.geometry("50x200")
+    globals.pop = tk.Toplevel(globals.window)
+    globals.pop.geometry("50x200")
     if (globals.color_val):
-        button1 = tk.Button(pop,bg='white',command = lambda : func_return('q'))
+        button1 = tk.Button(globals.pop,bg='white',command = lambda : func_return('q'))
         button1.place(height=50,width=50, x=0, y=0)
         assign_new_piece(button1,"alpha/wq.png")
         
-        button2 = tk.Button(pop,bg='white',command = lambda : func_return('b'))
+        button2 = tk.Button(globals.pop,bg='white',command = lambda : func_return('b'))
         button2.place(height=50,width=50, x=0, y=50)
         assign_new_piece(button2,"alpha/wb.png")
         
-        button3 = tk.Button(pop,bg='white',command = lambda : func_return('n'))
+        button3 = tk.Button(globals.pop,bg='white',command = lambda : func_return('n'))
         button3.place(height=50,width=50, x=0, y=100)
         assign_new_piece(button3,"alpha/wn.png")
         
-        button4 = tk.Button(pop,bg='white',command = lambda : func_return('r'))
+        button4 = tk.Button(globals.pop,bg='white',command = lambda : func_return('r'))
         button4.place(height=50,width=50, x=0, y=150)
         assign_new_piece(button4,"alpha/wr.png")
     else:
-        button1 = tk.Button(pop,bg='white',command = lambda : func_return('q'))
+        button1 = tk.Button(globals.pop,bg='white',command = lambda : func_return('q'))
         button1.place(height=50,width=50, x=0, y=0)
         assign_new_piece(button1,"alpha/bq.png")
 
-        button2 = tk.Button(pop,bg='white',command = lambda : func_return('b'))
+        button2 = tk.Button(globals.pop,bg='white',command = lambda : func_return('b'))
         button2.place(height=50,width=50, x=0, y=50)
         assign_new_piece(button2,"alpha/bb.png")
         
-        button3 = tk.Button(pop,bg='white',command = lambda : func_return('n'))
+        button3 = tk.Button(globals.pop,bg='white',command = lambda : func_return('n'))
         button3.place(height=50,width=50, x=0, y=100)
         assign_new_piece(button3,"alpha/bn.png")
         
-        button4 = tk.Button(pop,bg='white',command = lambda : func_return('r'))
+        button4 = tk.Button(globals.pop,bg='white',command = lambda : func_return('r'))
         button4.place(height=50,width=50, x=0, y=150)
         assign_new_piece(button4,"alpha/br.png")
 

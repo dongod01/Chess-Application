@@ -23,9 +23,6 @@ def others_move():
         globals.lock.release()
 
 def my_move(k):
-    globals.x
-    globals.prev
-    
     if globals.x:
         ind4 = globals.chess_list.index(k)
         if (ind4 in range(0,16)):   

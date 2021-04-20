@@ -24,7 +24,7 @@ def GUI_move_impl(prev,k,prom_char,called_from):
         print("Inside promotion check")
         if (prom_char == 't'):
             call_message_box()    
-            window.wait_window(pop)     # the function waits for the other window to close
+            globals.window.wait_window(globals.pop)     # the function waits for the other window to close
 
             if globals.newp=='q' and globals.color_val:
                     assign_new_piece(globals.button_list[prev],"alpha/wq.png")

@@ -1,6 +1,7 @@
 window = None
 lock = None
 board = None
+pop = None                  # pop is used for promotion
 
 button_list = []
 chess_list = []
