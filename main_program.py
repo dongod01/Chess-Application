@@ -4,41 +4,37 @@
 
 """ always use loopback or ::1 or [::1] for local please """ 
 
-import gui
+import globals
+from gui import main
 import socket
 
 def negotitiate_color():	## True is white and false is black
-	global color_val
-	global name1,name2
+	print("What is your name")
+	globals.name1 = input()
+	globals.my_socket.sendall(globals.name1.encode())
 
+	globals.name2 = globals.my_socket.recv(1024).decode()
+	
 	while (True):
-		print("What is your name")
-		name1 = input()
-		my_socket.sendall(name1.encode())
-
-		name2 = my_socket.recv(1024).decode()
-		
 		print("What color do you want ??? Please enter b/B or w/W")
 		color1 = input()
-		my_socket.sendall(color1.encode())
-		
-		color2 = my_socket.recv(1024).decode()
+		globals.my_socket.sendall(color1.encode())
+		color2 = globals.my_socket.recv(1024).decode()
 
 		if ((color1 == 'b' or color1 == 'B') and (color2 == 'w'or color2 == 'W')):
-			color_val = False
+			globals.color_val = False
 			break
 		elif ((color1 == 'w' or color1 == 'W') and (color2 == 'b' or color2 == 'B')):
-			color_val = True
+			globals.color_val = True
 			break
 	
 def make_client(server_ip_addr,socket_port_number):
-	global my_socket
 	if socket.has_ipv6:
-		my_socket = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
+		globals.my_socket = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
 	else:
-		my_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+		globals.my_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
-	my_socket.connect((server_ip_addr, socket_port_number))
+	globals.my_socket.connect((server_ip_addr, socket_port_number))
 
 def make_server():
 
@@ -48,9 +44,7 @@ def make_server():
     else:
         my_server_socket = socket.create_server(addr)
 
-    global my_socket
-    my_socket, address = my_server_socket.accept()
-
+    globals.my_socket, address = my_server_socket.accept()
 	
 def networking():
 	print("Enter 1 to make yourself a server or 2 to make yourself a client")
@@ -64,12 +58,11 @@ def networking():
 		port = int(input())
 		make_client(ip,port)
 
-
-def main():
+def primary_main():
 	networking()
 	negotitiate_color()
-	print(color_val)
-	gui.main(color_val,my_socket,name1,name2)
+	print(globals.color_val)
+	main()
 	
 if __name__ == "__main__":
-    main()
+    primary_main()
