@@ -18,75 +18,81 @@ def GUI_move_impl(prev,k,prom_char,called_from):
      
     yuci = chess.Move.from_uci(uci)
     print(globals.board.legal_moves)
+
+
     
     if promotion_check(prev,k,called_from):
-                
-        print("Inside promotion check")
-        if (prom_char == 't'):
-            call_message_box()    
-            globals.window.wait_window(globals.pop)     # the function waits for the other window to close
+        uci1 = uci + 'q'
+        yuci1 = chess.Move.from_uci(uci1)
+        if yuci1 in globals.board.legal_moves:
 
-            if globals.newp=='q' and globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/wq.png")
-            elif globals.newp=='r' and globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/wr.png")
-            elif globals.newp=='b' and globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/wb.png")
-            elif globals.newp=='n' and globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/wn.png")
-            elif globals.newp=='q' and not globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/bq.png")
-            elif globals.newp=='r' and not globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/br.png")
-            elif globals.newp=='b' and not globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/bb.png")
-            elif globals.newp=='n' and not globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/bn.png")
-            uci += globals.newp
-        else:
-            uci += prom_char
-            if prom_char=='q' and not globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/wq.png")
-            elif prom_char=='r' and not globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/wr.png")
-            elif prom_char=='b' and not globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/wb.png")
-            elif prom_char=='n' and not globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/wn.png")
-            elif prom_char=='q' and globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/bq.png")
-            elif prom_char=='r' and globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/br.png")
-            elif prom_char=='b' and globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/bb.png")
-            elif prom_char=='n' and globals.color_val:
-                    assign_new_piece(globals.button_list[prev],"alpha/bn.png")
-        
-        exchange_piece(globals.button_list[prev],globals.button_list[k])
-        
-        try:
-            # Index of capturing piece
-            ind1 = globals.chess_list.index(prev, 0, len(globals.chess_list))
+            print("Inside promotion check")
+            if (prom_char == 't'):
+                call_message_box()    
+                globals.window.wait_window(globals.pop)     # the function waits for the other window to close
+
+                if globals.newp=='q' and globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/wq.png")
+                elif globals.newp=='r' and globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/wr.png")
+                elif globals.newp=='b' and globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/wb.png")
+                elif globals.newp=='n' and globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/wn.png")
+                elif globals.newp=='q' and not globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/bq.png")
+                elif globals.newp=='r' and not globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/br.png")
+                elif globals.newp=='b' and not globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/bb.png")
+                elif globals.newp=='n' and not globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/bn.png")
+                uci += globals.newp
+            else:
+                uci += prom_char
+                if prom_char=='q' and not globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/wq.png")
+                elif prom_char=='r' and not globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/wr.png")
+                elif prom_char=='b' and not globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/wb.png")
+                elif prom_char=='n' and not globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/wn.png")
+                elif prom_char=='q' and globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/bq.png")
+                elif prom_char=='r' and globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/br.png")
+                elif prom_char=='b' and globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/bb.png")
+                elif prom_char=='n' and globals.color_val:
+                        assign_new_piece(globals.button_list[prev],"alpha/bn.png")
             
-        except ValueError:
-            print("No piece in initial index in move function of promotion")
+            
+            exchange_piece(globals.button_list[prev],globals.button_list[k])
         
-        # Index of captured piece
-        ind2 = globals.chess_list.index(k, 0, len(globals.chess_list)) if k in globals.chess_list else -1
-        globals.chess_list[ind1] = k
+            try:
+                # Index of capturing piece
+                ind1 = globals.chess_list.index(prev, 0, len(globals.chess_list))
+                
+            except ValueError:
+                print("No piece in initial index in move function of promotion")
+            
+            # Index of captured piece
+            ind2 = globals.chess_list.index(k, 0, len(globals.chess_list)) if k in globals.chess_list else -1
+            globals.chess_list[ind1] = k
 
-        if ind2!=-1:
-            globals.chess_list[ind2] = -1  #Making the captured piece -1 in chesslist
+            if ind2!=-1:
+                globals.chess_list[ind2] = -1  #Making the captured piece -1 in chesslist
+            
         
-       
-        islegal=True
+            islegal=True
 
-        globals.board.push_san(uci)
+            globals.board.push_san(uci)
 
-        print(globals.chess_list)
+            print(globals.chess_list)
 
-        print(globals.board)           
-    
+            print(globals.board)           
+
     elif yuci in globals.board.legal_moves:
             
         # First piece move

@@ -17,8 +17,9 @@ def others_move():
         print("this is in others move " + str(prev) + "  " + str(k))
         print("the thread count is " + str(threading.active_count()))
 
-        globals.name_label4["text"] = "Your Move"
         GUI_move_impl(prev,k,str3,False)
+        globals.name_label4["text"] = "Your Move"
+
     finally:
         globals.lock.release()
 
@@ -41,10 +42,11 @@ def my_move(k):
             globals.button_list[k].configure(bg = 'white')
 
         else: 
-            globals.name_label4["text"] = "Opponent's Move"
+            
             ret1,ret2 = GUI_move_impl(globals.prev,k,'t',True)       
 
             if(ret1):
+                globals.name_label4["text"] = "Opponent's Move"
                 reinstate_color(globals.prev)
                 reinstate_color(k)
                 
@@ -78,7 +80,10 @@ def initialize_board():
     name_label1 = tk.Label( globals.window, text=globals.name1+ "(you)",font = ("Arial",12))
     name_label2 = tk.Label( globals.window, text=globals.name2+ "(opponent)",font = ("Arial",12))
     globals.name_label3 = tk.Label( globals.window, text="Match Ongoing",font = ("Arial",12))
-    globals.name_label4 = tk.Label( globals.window, text="Your move",font = ("Arial",12))
+    if globals.color_val:
+        globals.name_label4 = tk.Label( globals.window, text="Your move",font = ("Arial",12))
+    elif not globals.color_val:
+        globals.name_label4 = tk.Label( globals.window, text="Opponent's move",font = ("Arial",12))
 
     
 
@@ -132,16 +137,6 @@ def initialize_chess():
 
     if (globals.color_val == False):
         print("Initializing for black man!!!")
-        
-        #board.apply_transform(chess.flip_horizontal)
-        #board.apply_transform(chess.flip_vertical)
-        
-        #Mirror is WRONG, no second thoughts
-        
-        #board.apply_mirror()
-        #board.apply_transform(chess.flip_horizontal)
-
-        '''Black needs to know he's not playing from white side on library board'''
         
         assign_new_piece(globals.button_list[56],png_path["wr"])
         assign_new_piece(globals.button_list[57],png_path["wn"])
