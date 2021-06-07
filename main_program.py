@@ -5,7 +5,7 @@
 """ always use loopback or ::1 or [::1] for local please """ 
 
 import globals
-from gui import main
+from gui import main as gui_main
 import socket
 
 def negotitiate_color():	## True is white and false is black
@@ -62,7 +62,7 @@ def primary_main():
 	networking()
 	negotitiate_color()
 	print(globals.color_val)
-	main()
+	gui_main()
 	
 if __name__ == "__main__":
     primary_main()

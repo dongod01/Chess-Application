@@ -5,8 +5,11 @@
 
 DONE: Fix promotion: Add flag/parameter to GUI_imple to indicate others_move/my_move
 
+new function -> button
+import sr 
 
-
+my_move(prev)
+my_move(k)
 
 Create more files/proper inclusion
 

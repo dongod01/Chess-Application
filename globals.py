@@ -6,6 +6,7 @@ pop = None                  # pop is used for promotion
 button_list = []
 chess_list = []
 
+
 color_val = None
 my_socket = None
 
