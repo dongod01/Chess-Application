@@ -10,8 +10,8 @@ def sound_impl():
             audio_text = r.listen(source,phrase_time_limit=5)
             print("Time over, thanks")
             
-            s = (r.recognize_google(audio_text).lower().replace(" ","")
-            print("Text: "+ s)
+            s = r.recognize_google(audio_text).lower().replace(" ","")
+            print("Text: " + s)
         
         sound_found = 0
         sound_k=-1
