@@ -7,7 +7,7 @@ def sound_impl():
     while (sound_found < 2) :
         with sr.Microphone() as source:
             print("Talk")
-            audio_text = r.listen(source,phrase_time_limit=5)
+            audio_text = r.listen(source,phrase_time_limit=3)
             print("Time over, thanks")
             
             s = r.recognize_google(audio_text).lower().replace(" ","")
@@ -21,18 +21,18 @@ def sound_impl():
             if (sound_found >= 2): break
             if s[i]>='1' and s[i]<='8':
                 if (sound_found == 0 ) :         
-                    sound_prev = int(ord(s[i])-ord('1')) 
+                    sound_prev = 8*int(ord(s[i])-ord('1')) 
                     if (s[i-1] >= 'a' and s[i-1] <= 'h') :
                         sound_found = 1
-                        sound_prev += int(8*(ord(s[i-1])-97))
+                        sound_prev += int((ord(s[i-1])-97))
                 
                 elif (sound_found == 1) :
-                    sound_k = int(ord(s[i])-ord('1')) 
+                    sound_k = 8*int(ord(s[i])-ord('1')) 
                     if (s[i-1] >= 'a' and s[i-1] <= 'h') :
                         sound_found = 2
-                        sound_k += int(8*(ord(s[i-1])-97))
+                        sound_k += int((ord(s[i-1])-97))
         
-        print(sound_found+" "+sound_prev + " " + sound_k)
+        print(str(sound_found)+" "+str(sound_prev) + " " + str(sound_k))
 
 
 if __name__ == "__main__":
