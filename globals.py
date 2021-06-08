@@ -10,6 +10,8 @@ chess_list = []
 color_val = None
 my_socket = None
 
+voice_label = None
+
 name1=""
 name2=""
 

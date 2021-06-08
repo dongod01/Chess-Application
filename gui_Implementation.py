@@ -1,6 +1,59 @@
 import globals 
 from helper import *
 
+def others_move():
+    globals.lock
+    globals.lock.acquire()
+    try:
+        str_other = globals.my_socket.recv(1024).decode()
+        str1,str2,str3 = str_other.split(',')
+            
+        prev = 63 - int(str1)
+        k = 63 - int(str2)
+            
+        print("this is in others move " + str(prev) + "  " + str(k))
+        print("the thread count is " + str(threading.active_count()))
+        GUI_move_impl(prev,k,str3,False)
+        globals.name_label4["text"] = "Your Move"
+
+    finally:
+        globals.lock.release()
+
+def my_move(k):
+    
+    if globals.x:
+        ind4 = globals.chess_list.index(k)
+        if (ind4 in range(0,16)):   
+            globals.prev = k
+            print(k)
+            globals.button_list[k].configure(bg = 'green')
+        else:
+            globals.x = not globals.x
+
+    else:
+        print(k)
+        # Handling the case when sam==e square is clicked twice
+        if k==globals.prev and (k//8+k%8)%2==0:
+            globals.button_list[k].configure(bg = '#8af542')
+        elif k==globals.prev and (k//8+k%8)%2!=0:
+            globals.button_list[k].configure(bg = 'white')
+
+        else: 
+            ret1,ret2 = GUI_move_impl(globals.prev,k,'t',True)       
+
+            if(ret1):
+                globals.name_label4["text"] = "Opponent's Move"
+                reinstate_color(globals.prev)
+                reinstate_color(k)
+                
+                send_move(globals.prev,k,ret2)
+                threading.Thread(target=others_move).start()
+                
+                globals.prev = -1
+
+    globals.x = not globals.x
+    if globals.x: return ret1   
+
 def GUI_move_impl(prev,k,prom_char,called_from):
 
     globals.newp = prom_char

@@ -3,58 +3,7 @@
 
 import globals 
 from gui_Implementation import *
-
-def others_move():
-    globals.lock
-    globals.lock.acquire()
-    try:
-        str_other = globals.my_socket.recv(1024).decode()
-        str1,str2,str3 = str_other.split(',')
-            
-        prev = 63 - int(str1)
-        k = 63 - int(str2)
-            
-        print("this is in others move " + str(prev) + "  " + str(k))
-        print("the thread count is " + str(threading.active_count()))
-        GUI_move_impl(prev,k,str3,False)
-        globals.name_label4["text"] = "Your Move"
-
-    finally:
-        globals.lock.release()
-
-def my_move(k):
-    if globals.x:
-        ind4 = globals.chess_list.index(k)
-        if (ind4 in range(0,16)):   
-            globals.prev = k
-            print(k)
-            globals.button_list[k].configure(bg = 'green')
-        else:
-            globals.x = not globals.x
-
-    else:
-        print(k)
-        # Handling the case when sam==e square is clicked twice
-        if k==globals.prev and (k//8+k%8)%2==0:
-            globals.button_list[k].configure(bg = '#8af542')
-        elif k==globals.prev and (k//8+k%8)%2!=0:
-            globals.button_list[k].configure(bg = 'white')
-
-        else: 
-            
-            ret1,ret2 = GUI_move_impl(globals.prev,k,'t',True)       
-
-            if(ret1):
-                globals.name_label4["text"] = "Opponent's Move"
-                reinstate_color(globals.prev)
-                reinstate_color(k)
-                
-                send_move(globals.prev,k,ret2)
-                threading.Thread(target=others_move).start()
-                
-                globals.prev = -1
-
-    globals.x = not globals.x   
+from sound import sound_impl 
     
 def initialize_board():
     print("Initializing board wait!!!")
@@ -79,18 +28,23 @@ def initialize_board():
     name_label1 = tk.Label( globals.window, text=globals.name1+ "(you)",font = ("Arial",12))
     name_label2 = tk.Label( globals.window, text=globals.name2+ "(opponent)",font = ("Arial",12))
     globals.name_label3 = tk.Label( globals.window, text="Match Ongoing",font = ("Arial",12))
+    
     if globals.color_val:
         globals.name_label4 = tk.Label( globals.window, text="Your move",font = ("Arial",12))
     elif not globals.color_val:
         globals.name_label4 = tk.Label( globals.window, text="Opponent's move",font = ("Arial",12))
-
     
+    voice_btn = tk.Button(globals.window,bg='#388e8e',text = "Speak!", command = sound_impl)  
+    globals.voice_label = tk.Label( globals.window, text = "(Empty)", font = ("Arial",12))
 
-    name_label1.place(height=100,width=300, x=500, y=400)
-    name_label2.place(height=100,width=300, x=500, y=100)
-    globals.name_label3.place(height=100,width=300, x=500, y=200)
-    globals.name_label4.place(height=100,width=300, x=500, y=300)
-
+    name_label1.place(height=100,width=300, x=450, y=400)
+    name_label2.place(height=100,width=300, x=450, y=100)
+    globals.name_label3.place(height=100,width=300, x=450, y=200)
+    globals.name_label4.place(height=100,width=300, x=450, y=300)
+    
+    globals.voice_label.place(height=100,width=300, x=600, y=300)
+    voice_btn.place(height=100,width=300, x=600, y=200)
+    
 def initialize_chess():
     for i in range(16):
         globals.chess_list.append(i)

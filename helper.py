@@ -8,9 +8,9 @@ import globals
 
 def position_checker(called_from):
     if(not globals.board.turn):
-            s="White"
+            s = "White"
     else:
-            s="Black"
+            s = "Black"
     
 
     if globals.board.is_checkmate():
