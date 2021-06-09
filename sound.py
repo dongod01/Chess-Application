@@ -1,8 +1,15 @@
 import speech_recognition as sr
 import globals
+import threading
 from gui_Implementation import my_move as sound_move
 
 def sound_impl():
+    print("the thread count at sound_impl is " + str(threading.active_count()))
+    
+    print(str(globals.color_val) + " " +  str(globals.move_counter))
+
+    if (not globals.color_val and globals.move_counter == 0): return
+
     r = sr.Recognizer()
     sound_found = 0
     sound_flag = False
@@ -46,22 +53,13 @@ def sound_impl():
                             sound_k += int((ord(s[i-1])-97))
                     
             if (sound_found == 2):
+                if not globals.color_val:
+                    sound_k = 63 - sound_k
+                    sound_prev = 63 - sound_prev
                 sound_move(sound_prev)
                 if(sound_move(sound_k)): 
                     sound_flag = True
-                    break    
+                    break
+
         
         print(str(sound_found)+" "+str(sound_prev) + " " + str(sound_k))
-
-        
-
-
-
-
-
-
-
-
-        
-        
-

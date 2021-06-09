@@ -7,7 +7,7 @@ def others_move():
     try:
         str_other = globals.my_socket.recv(1024).decode()
         str1,str2,str3 = str_other.split(',')
-            
+        globals.move_counter+=1 
         prev = 63 - int(str1)
         k = 63 - int(str2)
             
@@ -45,14 +45,14 @@ def my_move(k):
                 globals.name_label4["text"] = "Opponent's Move"
                 reinstate_color(globals.prev)
                 reinstate_color(k)
-                
+                globals.move_counter+=1
                 send_move(globals.prev,k,ret2)
                 threading.Thread(target=others_move).start()
                 
                 globals.prev = -1
 
     globals.x = not globals.x
-    if globals.x: return ret1   
+    if (globals.x and ret1) : return ret1   
 
 def GUI_move_impl(prev,k,prom_char,called_from):
 

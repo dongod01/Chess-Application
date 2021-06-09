@@ -4,7 +4,11 @@
 import globals 
 from gui_Implementation import *
 from sound import sound_impl 
-    
+
+def start_capture_thread():
+    t2 = threading.Thread(target=sound_impl)
+    t2.start()
+
 def initialize_board():
     print("Initializing board wait!!!")
     highest = 450
@@ -34,7 +38,7 @@ def initialize_board():
     elif not globals.color_val:
         globals.name_label4 = tk.Label( globals.window, text="Opponent's move",font = ("Arial",12))
     
-    voice_btn = tk.Button(globals.window,bg='#388e8e',text = "Speak!", command = sound_impl)  
+    voice_btn = tk.Button(globals.window,bg='#388e8e',text = "Speak!", command = start_capture_thread)  
     globals.voice_label = tk.Label( globals.window, text = "(Empty)", font = ("Arial",12))
 
     name_label1.place(height=100,width=300, x=450, y=400)
@@ -42,8 +46,8 @@ def initialize_board():
     globals.name_label3.place(height=100,width=300, x=450, y=200)
     globals.name_label4.place(height=100,width=300, x=450, y=300)
     
-    globals.voice_label.place(height=100,width=300, x=600, y=300)
-    voice_btn.place(height=100,width=300, x=600, y=200)
+    globals.voice_label.place(height=100,width=200, x=600, y=300)
+    voice_btn.place(height=30,width=80, x=600, y=200)
     
 def initialize_chess():
     for i in range(16):

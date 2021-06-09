@@ -9,16 +9,22 @@ loop -> my_move() -> GuiImpl -> send_move()-> others_move() (new thread) ->
 
 
 t - not promotion
-
 n
 r
 b
 q
 
-CHange acc to back's perspective in sound.py
-Thread impl for sound input/text
+Wrapper is a must for tkinter button command.
+
+
+CHange acc to back's perspective in sound.py(done)
+Thread impl for sound input/text ( done)
+To do:
+
 Improve gui
 Exclude all command line input
+
+
  
 
 
