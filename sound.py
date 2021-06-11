@@ -10,19 +10,16 @@ preferred_text = [("a1",1),("a2",1),("a3",1),("a4",1),("a5",1),("a6",1),("a7",1)
                   ("e1",1),("e2",1),("e3",1),("e4",1),("e5",1),("e6",1),("e7",1),("e8",1),
                   ("f1",1),("f2",1),("f3",1),("f4",1),("f5",1),("f6",1),("f7",1),("f8",1),
                   ("g1",1),("g2",1),("g3",1),("g4",1),("g5",1),("g6",1),("g7",1),("g8",1),
-                  ("h1",1),("h2",1),("h3",1),("h4",1),("h5",1),("h6",1),("h7",1),("h8",1),
-                  ]
-preferred_text_string = [("a1"),("a2"),("a3"),("a4"),("a5"),("a6"),("a7"),("a8"),
-                  ("b1"),("b2"),("b3"),("b4"),("b5"),("b6"),("b7"),("b8"),
-                  ("c1"),("c2"),("c3"),("c4"),("c5"),("c6"),("c7"),("c8"),
-                  ("d1"),("d2"),("d3"),("d4"),("d5"),("d6"),("d7"),("d8"),
-                  ("e1"),("e2"),("e3"),("e4"),("e5"),("e6"),("e7"),("e8"),
-                  ("f1"),("f2"),("f3"),("f4"),("f5"),("f6"),("f7"),("f8"),
-                  ("g1"),("g2"),("g3"),("g4"),("g5"),("g6"),("g7"),("g8"),
-                  ("h1"),("h2"),("h3"),("h4"),("h5"),("h6"),("h7"),("h8"),
-                  ]
+                  ("h1",1),("h2",1),("h3",1),("h4",1),("h5",1),("h6",1),("h7",1),("h8",1), ]
 
-
+preferred_text_string = ["a1","a2","a3","a4","a5","a6","a7","a8",
+                         "b1","b2","b3","b4","b5","b6","b7","b8",
+                        "c1","c2","c3","c4","c5","c6","c7","c8",
+                        "d1","d2","d3","d4","d5","d6","d7","d8",
+                        "e1","e2","e3","e4","e5","e6","e7","e8",
+                        "f1","f2","f3","f4","f5","f6","f7","f8",
+                        "g1","g2","g3","g4","g5","g6","g7","g8",
+                        "h1","h2","h3","h4","h5","h6","h7","h8" ]
 
 def sound_impl():
     print("the thread count at sound_impl is " + str(threading.active_count()))
@@ -40,9 +37,11 @@ def sound_impl():
         with sr.Microphone() as source:
             print("Talk")
             
-            audio_text = r.listen(source,phrase_time_limit=3)
+            audio_text = r.listen(source,phrase_time_limit=5)
+            
             print("Time over, thanks")
-            x = r.recognize_sphinx(audio_text, keyword_entries = preferred_text_string)
+
+            x = r.recognize_google(audio_text,language = "en-IN")
             
             globals.voice_label["text"] = x
             s = x.lower().replace(" ","")
