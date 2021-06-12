@@ -12,14 +12,40 @@ import threading
 
 main_window = None
 
+def negototiate_color_without_name():
+	
+	
+	while (True):
+		print("What color do you want ??? Please enter b/B or w/W")
+		color1 = color_entry_widget.get()
+		globals.my_socket.sendall(color1.encode())
+		color2 = globals.my_socket.recv(1024).decode()
 
+		if ((color1 == 'b' or color1 == 'B') and (color2 == 'w'or color2 == 'W')):
+			globals.color_val = False
+			break
+
+		elif ((color1 == 'w' or color1 == 'W') and (color2 == 'b' or color2 == 'B')):
+			globals.color_val = True
+			break
+	
+	print(globals.color_val)
+	threading.Thread(target=gui_main).start()
+
+		
 
 def gui_negotiate_color():
 	color_button.destroy()
 	heading_label["text"] = "Choose Color"
 
-	color_entry_widget = tk.Entry(main_window)
-	color_entry_widget.place(height=50,width=300, x=150, y=350)
+	globals.my_socket.sendall(globals.name1.encode())
+	globals.name2 = globals.my_socket.recv(1024).decode()
+
+	White_Button = tk.Button(main_window,text = "WHITE",command = lambda)
+	White_Button.place() 
+
+	Black_Button = tk.Button(main_window,text = "BLACK")
+	Black_Button.place()
 
 
 def gui_server():
@@ -35,22 +61,38 @@ def gui_server():
 	color_button = tk.Button(main_window,text="Select Color",command = gui_negotiate_color)
 	color_button.place(height=50,width=300, x=150, y=350)
 
+def submit_client():
+	server_ip = IP_Entry_Box.get()
+	server_port = int(Port_Entry_Box.get())
+
+	IP_Entry_Box.destroy()
+	Port_Entry_Box.destroy()
+	Client_Submit_Button.destroy()
+
+	make_client(server_ip,server_port)
+
+	global color_button
+	color_button = tk.Button(main_window,text="Select Color",command = gui_negotiate_color)
+	color_button.place(height=50,width=300, x=150, y=350)
 
 def gui_client():
 	Server_button.destroy()
 	Client_button.destroy()
 
 	heading_label["text"] = 'Please Enter the Server Details'
-	
-	IP_Entry_Box = 
-	Port_Entry_Box = 
+	player_name_label.place(height=100,width=100, x=150, y=150)
 
+	global IP_Entry_Box
+	IP_Entry_Box = tk.Entry(main_window)
+	IP_Entry_Box.place(height=50,width=300, x=150, y=250)
 
+	global Port_Entry_Box
+	Port_Entry_Box = tk.Entry(main_window)
+	Port_Entry_Box.place(height=50,width=300, x=150, y=350)
 
-	global color_button
-	color_button = tk.Button(main_window,text="Select Color",command = gui_negotiate_color)
-	color_button.place(height=50,width=300, x=150, y=350)
-
+	global Client_Submit_Button
+	Client_Submit_Button = tk.Button(main_window,text="Submit",command = submit_client)
+	Client_Submit_Button.place(height=50,width=100, x=150, y=450)
 
 def gui_networking():
 	heading_label["text"] = 'Do you want to be a Server or a Client ?'
@@ -82,7 +124,7 @@ def load_gui():
 
 	global heading_label
 	heading_label = tk.Label(main_window, text="Login Details",font = ("Arial",18,"bold"))
-	heading_label.place(height=100,width=500, x=50, y=100)
+	heading_label.place(height=100,width=500, x=50, y=50)
 	
 	global player_name_label
 	player_name_label =  tk.Label( main_window, text="Name",font = ("Arial",13))
@@ -149,13 +191,6 @@ def networking():
 		ip = input()
 		port = int(input())
 		make_client(ip,port)
-
-def primary_main():
-	load_gui()
-	networking()
-	negotitiate_color()
-	print(globals.color_val)
-	gui_main()
 	
 if __name__ == "__main__":
-    primary_main()
+    load_gui()
