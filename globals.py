@@ -13,8 +13,8 @@ my_socket = None
 
 voice_label = None
 
-name1=""
-name2=""
+name1 = ""
+name2 = ""
 
 name_label3 = None
 name_label4 = None
