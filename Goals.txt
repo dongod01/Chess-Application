@@ -1,39 +1,9 @@
 1> complete gui , after the canvas chess is ready and moves ko design karo and then return the moves
 2> networking design karo
-3>
-
+3> sound design karo
 
 DONE: Fix promotion: Add flag/parameter to GUI_imple to indicate others_move/my_move
 
-new function -> button
-import sr 
-
-my_move(prev)
-my_move(k)
-
-Create more files/proper inclusion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3> sound design karo
+Create more files/proper inclusion -- Done
 
 
