@@ -14,8 +14,11 @@ r
 b
 q
 
-Wrapper is a must for tkinter button command.
+Main_window improvement
+FEN/PGN addition to gui/Load on completion
+Sound
 
+Wrapper is a must for tkinter button command.
 
 CHange acc to back's perspective in sound.py(done)
 Thread impl for sound input/text ( done)

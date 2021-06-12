@@ -8,6 +8,19 @@ import globals
 from gui import main as gui_main
 import socket
 
+def load_gui():
+	main_window = Tk.tk()
+	main_window.title('Chess Application')
+	main_window.geometry("500x500")
+	main_window.resizable(False,False)
+
+	heading_label = tk.Label( main_window, text="Login Details",font = ("Arial",18,"bold"))
+	name_label_1 = tk.Label( main_window, text="Server preference:",font = ("Arial",13))
+	name_label_2 = tk.Label( main_window, text="IP:",font = ("Arial",13))
+	name_label_2a = tk.Label( main_window, text="Port address:",font = ("Arial",13))
+	name_label_3 = tk.Label( main_window, text="Name",font = ("Arial",13))
+	name_label_4 = tk.Label( main_window, text="Color preference:",font = ("Arial",13))
+
 def negotitiate_color():	## True is white and false is black
 	print("What is your name")
 	globals.name1 = input()
@@ -59,6 +72,7 @@ def networking():
 		make_client(ip,port)
 
 def primary_main():
+	load_gui()
 	networking()
 	negotitiate_color()
 	print(globals.color_val)
