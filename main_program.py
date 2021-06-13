@@ -11,48 +11,59 @@ import tkinter as tk
 import threading 
 
 main_window = None
+bool_color = "0"
+negotiated = False
 
-def negototiate_color_without_name():
+def change_bool_white():
+	global bool_color
+	bool_color = 1
+
+def change_bool_black():
+	global bool_color
+	bool_color = 2
+
+def negotiate_color_without_name():
+	global bool_color,negotiated
+
+	bool_color = 0
+
+	print("What color do you want ??? Please enter b/B or w/W")
+	color1 = bool_color
 	
-	
-	while (True):
-		print("What color do you want ??? Please enter b/B or w/W")
-		color1 = color_entry_widget.get()
-		globals.my_socket.sendall(color1.encode())
-		color2 = globals.my_socket.recv(1024).decode()
+	globals.my_socket.sendall(str(color1).encode())
+	color2 = int(globals.my_socket.recv(1024).decode())
 
-		if ((color1 == 'b' or color1 == 'B') and (color2 == 'w'or color2 == 'W')):
-			globals.color_val = False
-			break
+	if (color1 == 1 and color2 == 2):
+		globals.color_val = True
+		negotiated = True
 
-		elif ((color1 == 'w' or color1 == 'W') and (color2 == 'b' or color2 == 'B')):
-			globals.color_val = True
-			break
-	
-	print(globals.color_val)
-	threading.Thread(target=gui_main).start()
+	elif color1 == 2 and color2 == 1:
+		globals.color_val = False
+		negotiated = True
 
-		
 
 def gui_negotiate_color():
+	global negotiated
 	color_button.destroy()
 	heading_label["text"] = "Choose Color"
-
 	globals.my_socket.sendall(globals.name1.encode())
 	globals.name2 = globals.my_socket.recv(1024).decode()
 
-	White_Button = tk.Button(main_window,text = "WHITE",command = lambda)
-	White_Button.place() 
+	White_Button = tk.Button(main_window,text = "WHITE",command = change_bool_white)
+	White_Button.place(height=50,width=300, x=150, y=350) 
 
-	Black_Button = tk.Button(main_window,text = "BLACK")
-	Black_Button.place()
+	Black_Button = tk.Button(main_window,text = "BLACK",command = change_bool_black)
+	Black_Button.place(height=50,width=300, x=150, y=500)
+	
+	while(not negotiated):
+		negotiate_color_without_name()
 
+	threading.Thread(target=gui_main).start()
 
 def gui_server():
 	Server_button.destroy()
 	Client_button.destroy()
 
-	
 	threading.Thread(target = make_server).start()
 
 	heading_label["text"] = 'Server Details are IP - BLAH - BLAH - BLAH port - BLAH - BLAH - BLAH'
