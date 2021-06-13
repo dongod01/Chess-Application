@@ -120,7 +120,7 @@ def initialize_chess():
     
 def main():
     globals.lock = threading.Lock()
-    globals.window = tk.Tk()
+    globals.window = tk.Toplevel(globals.main_window)
     globals.board = chess.Board()
 
     print("This is " + str(globals.color_val))

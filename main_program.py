@@ -10,55 +10,47 @@ import socket
 import tkinter as tk
 import threading 
 
-main_window = None
-bool_color = "0"
-negotiated = False
-
-def change_bool_white():
-	global bool_color
-	bool_color = 1
-
-def change_bool_black():
-	global bool_color
-	bool_color = 2
-
 def negotiate_color_without_name():
-	global bool_color,negotiated
-
-	bool_color = 0
-
-	print("What color do you want ??? Please enter b/B or w/W")
-	color1 = bool_color
+	global negotiated
+	negotiated = False
 	
-	globals.my_socket.sendall(str(color1).encode())
-	color2 = int(globals.my_socket.recv(1024).decode())
+	print("What color do you want ??? Please enter b/B or w/W inside function")
+	color1 = color_entry_box.get()
+	globals.my_socket.sendall(color1.encode())
+	color2 = globals.my_socket.recv(1024).decode()
 
-	if (color1 == 1 and color2 == 2):
-		globals.color_val = True
-		negotiated = True
+	if ((color1 == 'b' or color1 == 'B') and (color2 == 'w'or color2 == 'W')):
+			globals.color_val = False
+			negotiated = True
 
-	elif color1 == 2 and color2 == 1:
-		globals.color_val = False
-		negotiated = True
+	elif ((color1 == 'w' or color1 == 'W') and (color2 == 'b' or color2 == 'B')):
+			globals.color_val = True
+			negotiated = True
+	
+	if (negotiated):
+		color_entry_box.destroy()
+		Submit_Button.destroy()
 
+		heading_label["text"]
+
+		threading.Thread(target = gui_main).start()
 
 def gui_negotiate_color():
 	global negotiated
+	
 	color_button.destroy()
 	heading_label["text"] = "Choose Color"
 	globals.my_socket.sendall(globals.name1.encode())
 	globals.name2 = globals.my_socket.recv(1024).decode()
 
-	White_Button = tk.Button(main_window,text = "WHITE",command = change_bool_white)
-	White_Button.place(height=50,width=300, x=150, y=350) 
+	global color_entry_box
+	color_entry_box = tk.Entry(globals.main_window)
+	color_entry_box.place(height=50,width=300, x=150, y=350) 
 
-	Black_Button = tk.Button(main_window,text = "BLACK",command = change_bool_black)
-	Black_Button.place(height=50,width=300, x=150, y=500)
-	
-	while(not negotiated):
-		negotiate_color_without_name()
+	global Submit_Button
+	Submit_Button = tk.Button(globals.main_window,text = "Submit",command = negotiate_color_without_name)
+	Submit_Button.place(height=50,width=300, x=150, y=500)
 
-	threading.Thread(target=gui_main).start()
 
 def gui_server():
 	Server_button.destroy()
@@ -69,7 +61,7 @@ def gui_server():
 	heading_label["text"] = 'Server Details are IP - BLAH - BLAH - BLAH port - BLAH - BLAH - BLAH'
 
 	global color_button
-	color_button = tk.Button(main_window,text="Select Color",command = gui_negotiate_color)
+	color_button = tk.Button(globals.main_window,text="Select Color",command = gui_negotiate_color)
 	color_button.place(height=50,width=300, x=150, y=350)
 
 def submit_client():
@@ -83,7 +75,7 @@ def submit_client():
 	make_client(server_ip,server_port)
 
 	global color_button
-	color_button = tk.Button(main_window,text="Select Color",command = gui_negotiate_color)
+	color_button = tk.Button(globals.main_window,text="Select Color",command = gui_negotiate_color)
 	color_button.place(height=50,width=300, x=150, y=350)
 
 def gui_client():
@@ -94,26 +86,26 @@ def gui_client():
 	player_name_label.place(height=100,width=100, x=150, y=150)
 
 	global IP_Entry_Box
-	IP_Entry_Box = tk.Entry(main_window)
+	IP_Entry_Box = tk.Entry(globals.main_window)
 	IP_Entry_Box.place(height=50,width=300, x=150, y=250)
 
 	global Port_Entry_Box
-	Port_Entry_Box = tk.Entry(main_window)
+	Port_Entry_Box = tk.Entry(globals.main_window)
 	Port_Entry_Box.place(height=50,width=300, x=150, y=350)
 
 	global Client_Submit_Button
-	Client_Submit_Button = tk.Button(main_window,text="Submit",command = submit_client)
+	Client_Submit_Button = tk.Button(globals.main_window,text="Submit",command = submit_client)
 	Client_Submit_Button.place(height=50,width=100, x=150, y=450)
 
 def gui_networking():
 	heading_label["text"] = 'Do you want to be a Server or a Client ?'
 	
 	global Server_button
-	Server_button = tk.Button(main_window,text="Server",command = gui_server)
+	Server_button = tk.Button(globals.main_window,text="Server",command = gui_server)
 	Server_button.place(height=50,width=100, x=250, y=350)
 
 	global Client_button
-	Client_button = tk.Button(main_window,text="Client",command = gui_client)
+	Client_button = tk.Button(globals.main_window,text="Client",command = gui_client)
 	Client_button.place(height=50,width=100, x=250, y=450)
 
 
@@ -127,31 +119,30 @@ def set_name():
 
 
 def load_gui():
-	global main_window
-	main_window = tk.Tk()
-	main_window.title('Chess Application')
-	main_window.geometry("600x600")
-	main_window.resizable(False,False)
+	globals.main_window = tk.Tk()
+	globals.main_window.title('Chess Application')
+	globals.main_window.geometry("600x600")
+	globals.main_window.resizable(False,False)
 
 	global heading_label
-	heading_label = tk.Label(main_window, text="Login Details",font = ("Arial",18,"bold"))
+	heading_label = tk.Label(globals.main_window, text="Login Details",font = ("Arial",18,"bold"))
 	heading_label.place(height=100,width=500, x=50, y=50)
 	
 	global player_name_label
-	player_name_label =  tk.Label( main_window, text="Name",font = ("Arial",13))
+	player_name_label =  tk.Label( globals.main_window, text="Name",font = ("Arial",13))
 	player_name_label.place(height=100,width=300, x=150, y=250)
 
 	global name_entry_widget
-	name_entry_widget = tk.Entry(main_window)
+	name_entry_widget = tk.Entry(globals.main_window)
 	name_entry_widget.place(height=50,width=300, x=150, y=350)
 	
 	global Enter_button
-	Enter_button = tk.Button(main_window,text="Submit",command = set_name)
+	Enter_button = tk.Button(globals.main_window,text="Submit",command = set_name)
 	Enter_button.place(height=50,width=100, x=250, y=450)
 
 	print(globals.name1)
 
-	main_window.mainloop()
+	globals.main_window.mainloop()
 
 
 def negotitiate_color():	## True is white and false is black
