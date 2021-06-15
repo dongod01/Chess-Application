@@ -28,10 +28,30 @@ def negotiate_color_without_name():
 			negotiated = True
 	
 	if (negotiated):
+		if globals.color_val:
+			globals.game.headers["White"] = globals.name1
+			globals.game.headers["Black"] = globals.name2
+		else:
+			globals.game.headers["White"] = globals.name2
+			globals.game.headers["Black"] = globals.name1
+		
+		player_name_label.destroy()
 		color_entry_box.destroy()
 		Submit_Button.destroy()
+		heading_label.place(height=400,width=500, x=50, y=0)
+		if globals.color_val:
+			heading_label["text"] = "Game:\n" + str(globals.name1) + "\n(White)\n vs \n(Black)\n" + str(globals.name2)
+		else:
+			heading_label["text"] = "Game:\n" + str(globals.name2) + "\n(White)\n vs \n(Black)\n" + str(globals.name1)
+		
+		details_label = tk.Label(globals.main_window, text="Hey",font = ("Arial",14))
+		details_label.place(height=300,width=500, x=50, y=350)
+		hostname = socket.gethostname()
+		#ip1, port1 = globals.my_socket.getsockname()
+		#ip2, port2 = globals.my_socket.getpeername()
+		ip_address = socket.gethostbyname(hostname)
+		#details_label["text"] = "Server IP Address: " + str(ip1) + "\n Port: " + str(port1) + "\nClient IP Address: " + str(ip2) + "\n Port: " + str(port2)
 
-		heading_label["text"]
 
 		threading.Thread(target = gui_main).start()
 
@@ -57,8 +77,9 @@ def gui_server():
 	Client_button.destroy()
 
 	threading.Thread(target = make_server).start()
-
-	heading_label["text"] = 'Server Details are IP - BLAH - BLAH - BLAH port - BLAH - BLAH - BLAH'
+	hostname = socket.gethostname()
+	ip_address = socket.gethostbyname(hostname)
+	heading_label["text"] = "Host: \n" + str(hostname) + "IP address: " + str(ip_address)
 
 	global color_button
 	color_button = tk.Button(globals.main_window,text="Select Color",command = gui_negotiate_color)
@@ -115,6 +136,7 @@ def set_name():
 	player_name_label["text"] = globals.name1
 
 	name_entry_widget.destroy()
+	#player_name_label.destroy()
 	gui_networking()
 
 
