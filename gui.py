@@ -3,7 +3,7 @@
 
 import globals 
 from gui_Implementation import *
-from sound import sound_impl 
+from sound import sound_impl
 
 def start_capture_thread():
     t2 = threading.Thread(target=sound_impl)
@@ -11,7 +11,7 @@ def start_capture_thread():
 
 def initialize_board():
     print("Initializing board wait!!!")
-    highest = 450
+    highest = 400
     k=0
     for i in range(8):
         
@@ -28,9 +28,9 @@ def initialize_board():
             left_most+=50
 
         highest-=50
-
-    name_label1 = tk.Label( globals.window, text=globals.name1+ "(you)",font = ("Arial",12))
-    name_label2 = tk.Label( globals.window, text=globals.name2+ "(opponent)",font = ("Arial",12))
+    
+    name_label1 = tk.Label( globals.window, text=globals.name1+ "(you)",font = ("Arial",20))
+    name_label2 = tk.Label( globals.window, text=globals.name2+ "(opponent)",font = ("Arial",20))
     globals.name_label3 = tk.Label( globals.window, text="Match Ongoing",font = ("Arial",12))
     
     if globals.color_val:
@@ -41,13 +41,19 @@ def initialize_board():
     voice_btn = tk.Button(globals.window,bg='#388e8e',text = "Speak!", command = start_capture_thread)  
     globals.voice_label = tk.Label( globals.window, text = "(Empty)", font = ("Arial",12))
 
-    name_label1.place(height=100,width=300, x=450, y=400)
-    name_label2.place(height=100,width=300, x=450, y=100)
-    globals.name_label3.place(height=100,width=300, x=450, y=200)
-    globals.name_label4.place(height=100,width=300, x=450, y=300)
+    frame = tk.Frame(globals.window)
+    frame.place(height=200,width=400, x=500, y=150)
     
-    globals.voice_label.place(height=100,width=200, x=600, y=300)
-    voice_btn.place(height=30,width=80, x=600, y=200)
+    globals.moves_table = Moves_Table(frame)
+    globals.moves_table.pack(side="top", fill="both", expand=True)
+
+    name_label1.place(height=100,width=300, x=550, y=380)
+    name_label2.place(height=100,width=300, x=550, y=20)
+    globals.name_label3.place(height=30,width=150, x=177, y=10)
+    globals.name_label4.place(height=50,width=200, x=145, y=450)
+    
+    globals.voice_label.place(height=50,width=250, x=750, y=470)
+    voice_btn.place(height=30,width=80, x=600, y=480)
     
 def initialize_chess():
     for i in range(16):
@@ -122,6 +128,11 @@ def main():
     globals.lock = threading.Lock()
     globals.window = tk.Toplevel(globals.main_window)
     globals.board = chess.Board()
+    
+    globals.game.headers["Event"] = "Chess Application Practice Game"
+    today = date.today()
+    dt = today.strftime("%Y.%m.%d")
+    globals.game.headers["Date"] = dt
 
     print("This is " + str(globals.color_val))
 

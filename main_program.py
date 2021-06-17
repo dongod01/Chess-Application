@@ -79,7 +79,7 @@ def gui_server():
 	threading.Thread(target = make_server).start()
 	hostname = socket.gethostname()
 	ip_address = socket.gethostbyname(hostname)
-	heading_label["text"] = "Host: \n" + str(hostname) + "IP address: " + str(ip_address)
+	heading_label["text"] = "Host: " + str(hostname) + "\nIP address: " + str(ip_address)
 
 	global color_button
 	color_button = tk.Button(globals.main_window,text="Select Color",command = gui_negotiate_color)

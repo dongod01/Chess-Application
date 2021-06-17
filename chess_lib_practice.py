@@ -6,12 +6,29 @@ Created on Thu Mar  4 10:38:57 2021
 """
 
 import chess
+import chess.pgn
+from helper import *
 board  = chess.Board()
 
-board.push_san("c3")
-board.push_san("Nc6")
+board.push_san("f3")
+board.push_san("e5")
+board.push_san("g4")
+board.push_san("Qh4")
 
+game = chess.pgn.Game()
+game.headers["Event"] = "Example"
+node = game.add_variation(chess.Move.from_uci("f2f3"))
+node = node.add_variation(chess.Move.from_uci("e7e5"))
+node = node.add_variation(chess.Move.from_uci("g2g4"))
+node = node.add_variation(chess.Move.from_uci("d8h4"))
+today = date.today()
+d4 = today.strftime("%Y.%m.%d")
+game.headers["Date"] = d4
 
+game.headers["Result"] = "0-1"
+#node.comment = "Comment"
+
+print(game)
 
 '''board.push_san("a5")
 board.push_san("b4")
@@ -25,14 +42,20 @@ board.push_san("b6")
 board.push_san("a7")
 board.push_san("g6")
 alpha1 = board.san("")'''
-print(board)
+#print(board)
 
 board.apply_transform(chess.flip_horizontal)
 board.apply_transform(chess.flip_vertical)
 
 print(board.legal_moves)
 
-print (board)
+print("\n\n")
+
+print()
+
+
+#print(game)
+#print (board)
 
 # board.push_san("a8=Q")
 

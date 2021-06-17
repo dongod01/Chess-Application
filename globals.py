@@ -1,14 +1,22 @@
+import chess.pgn
+
 window = None
 lock = None
 board = None
+game = chess.pgn.Game()
+node = None
 pop = None                  # pop is used for promotion
 main_window = None
 
+
+moves_table = None
 button_list = []
 chess_list = []
 
-move_counter=0
+entry_list = [None]*300
 
+move_counter=0
+move_list = []
 color_val = None
 my_socket = None
 

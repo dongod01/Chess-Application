@@ -1,10 +1,68 @@
 import chess
+import chess.pgn
 import tkinter as tk
 from PIL import Image, ImageTk
 import time
+from datetime import date
 import threading
 
 import globals 
+
+def txtEvent(event):
+    if(event.state==12 and event.keysym=='c' ):
+        return
+    else:
+        return "break"
+
+class Moves_Table(tk.Frame):
+    def __init__(self, parent):
+
+        tk.Frame.__init__(self, parent)
+        self.canvas = tk.Canvas(self, borderwidth=0, background="#ffffff")
+        self.frame = tk.Frame(self.canvas, background="#ffffff")
+        self.vsb = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.vsb.set)
+
+        self.vsb.pack(side="right", fill="y")
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.canvas.create_window((4,4), window=self.frame, anchor="nw",
+                                  tags="self.frame")
+
+        self.frame.bind("<Configure>", self.onFrameConfigure)
+
+        self.populate()
+
+    def populate(self):
+        for k in range(100):
+            '''tk.Label(self.frame, text="%s" % row, width=3, borderwidth="1",
+                     relief="solid").grid(row=row, column=0)
+            t="this is the second column for row %s" %row
+            tk.Label(self.frame, text=t).grid(row=row, column=1)'''
+            i = 1 + int(k/2)
+            j = 1 + int(k%2)
+
+            globals.entry_list[k] = tk.Entry(self.frame, width=16, fg='blue',
+                               font=('Arial',16,'bold'))
+            
+            globals.entry_list[k].grid(row=i, column=j)
+            if k<len(globals.move_list):
+                globals.entry_list[k].insert(tk.END, globals.move_list[k])
+                globals.entry_list[k].bind("<Key>", lambda e: txtEvent(e))
+                
+            else:
+                globals.entry_list[k].insert(tk.END, "")
+                globals.entry_list[k].bind("<Key>", lambda e: txtEvent(e))
+
+
+    def onFrameConfigure(self, event):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+    
+    def set_Move_List_Cell(self,k,text):
+        i = 1 + int(k/2)
+        if(k%2==0):
+            tk.Label(self.frame, text="%s" % i, width=3).grid(row=i, column=0)
+        globals.entry_list[k].delete(0,"end")
+        globals.entry_list[k].insert(0, " "+text)
 
 def position_checker(called_from):
     if(not globals.board.turn):
@@ -16,8 +74,16 @@ def position_checker(called_from):
     if globals.board.is_checkmate():
         if called_from:
             globals.name_label3["text"] = "Checkmate! You win :)"
+            if globals.color_val:
+                globals.game.headers["Result"] = "1-0"
+            else:
+                globals.game.headers["Result"] = "0-1"
         else:
             globals.name_label3["text"] = "Checkmate! Opponent wins :("
+            if not globals.color_val:
+                globals.game.headers["Result"] = "1-0"
+            else:
+                globals.game.headers["Result"] = "0-1"
         
         print("\n\n\n")
         print("Checkmate! " +s+ " wins!" )
@@ -25,24 +91,28 @@ def position_checker(called_from):
         print("\n\n\n")
     elif globals.board.is_stalemate():
         globals.name_label3["text"] = "Stalemate -  Game ends in a draw."
+        globals.game.headers["Result"] = "1/2-1/2"
         print("\n\n\n")
         print("Stalemate -  Game ends in a draw." )
         print("#########################################################")
         print("\n\n\n")
     elif globals.board.is_repetition():
         globals.name_label3["text"] = "Threefold Repetition -  Game ends in a draw."
+        globals.game.headers["Result"] = "1/2-1/2"
         print("\n\n\n")
         print("Threefold Repetition -  Game ends in a draw." )
         print("#########################################################")
         print("\n\n\n")
     elif globals.board.is_fifty_moves():
         globals.name_label3["text"] = "50 move rule -  Game ends in a draw."
+        globals.game.headers["Result"] = "1/2-1/2"
         print("\n\n\n")    
         print("50 move rule - Game ends in a draw." )
         print("#########################################################")
         print("\n\n\n")
     elif globals.board.is_insufficient_material():
         globals.name_label3["text"] = "Insufficient -  Game ends in a draw."
+        globals.game.headers["Result"] = "1/2-1/2"
         print("Insufficient material for checkmate - Game ends in a draw." )
         print("#########################################################")
 

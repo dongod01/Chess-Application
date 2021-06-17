@@ -7,13 +7,16 @@ def others_move():
     try:
         str_other = globals.my_socket.recv(1024).decode()
         str1,str2,str3 = str_other.split(',')
-        globals.move_counter+=1 
+         
         prev = 63 - int(str1)
         k = 63 - int(str2)
             
         print("this is in others move " + str(prev) + "  " + str(k))
         print("the thread count is " + str(threading.active_count()))
         GUI_move_impl(prev,k,str3,False)
+
+        globals.move_counter+=1
+
         globals.name_label4["text"] = "Your Move"
 
     finally:
@@ -116,7 +119,6 @@ def GUI_move_impl(prev,k,prom_char,called_from):
                 elif prom_char=='n' and globals.color_val:
                         assign_new_piece(globals.button_list[prev],"alpha/bn.png")
             
-            
             exchange_piece(globals.button_list[prev],globals.button_list[k])
         
             try:
@@ -136,10 +138,15 @@ def GUI_move_impl(prev,k,prom_char,called_from):
         
             islegal=True
 
+            globals.node = globals.node.add_variation(chess.Move.from_uci(uci))
+            
+            current_move = globals.board.san(chess.Move.from_uci(uci))
+            globals.move_list.append(current_move)
+            globals.moves_table.set_Move_List_Cell(globals.move_counter,current_move)
+
             globals.board.push_san(uci)
 
             print(globals.chess_list)
-
             print(globals.board)           
 
     elif yuci in globals.board.legal_moves:
@@ -214,6 +221,15 @@ def GUI_move_impl(prev,k,prom_char,called_from):
         else:
             exchange_piece(globals.button_list[prev],globals.button_list[k])
             print("Xyz")
+
+        if(globals.move_counter==0):
+            globals.node = globals.game.add_variation(yuci)
+        else:
+            globals.node = globals.node.add_variation(yuci)
+        
+        current_move = globals.board.san(yuci)
+        globals.move_list.append(current_move)
+        globals.moves_table.set_Move_List_Cell(globals.move_counter,current_move)
 
         globals.board.push_san(uci)
         print(globals.board)
