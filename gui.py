@@ -5,6 +5,34 @@ import globals
 from gui_Implementation import *
 from sound import sound_impl
 
+def resign():
+    if (not globals.game_ended):
+        resultant_string = "1"
+        globals.resign_draw_socket.sendall(resultant_string.encode())
+
+        string_response = globals.resign_draw_socket.recv(1024).decode()
+        if (string_response == "1"): print("Opponent has resigned!!!")
+        print("Game Ended")
+
+        globals.game_ended = True
+
+def draw():
+    if (not globals.game_ended and globals.draw_offer_count == 0):
+        resultant_string = "0"
+        globals.resign_draw_socket.sendall(resultant_string.encode())
+
+        string_response = globals.resign_draw_socket.recv(1024).decode()
+        
+        if (string_response == "1"): 
+            print("Opponent has accepted the draw offer!!")
+            globals.game_ended = True
+            print("Game has ended!!!")
+
+        elif (string_response == "0"):
+            print("Opponent has declined the draw offer so continue playing !!")
+
+        globals.draw_offer_count += 1
+
 def start_capture_thread():
     t2 = threading.Thread(target=sound_impl)
     t2.start()
@@ -47,13 +75,19 @@ def initialize_board():
     globals.moves_table = Moves_Table(frame)
     globals.moves_table.pack(side="top", fill="both", expand=True)
 
-    name_label1.place(height=100,width=300, x=550, y=380)
+    resign_button = tk.Button(globals.window,bg='#388e8e',text = "Resign", command = resign)
+    resign_button.place(height=30,width=100, x=550, y=355)
+    
+    draw_button = tk.Button(globals.window,bg='#388e8e',text = "Draw", command = draw)
+    draw_button.place(height=30,width=100, x=740, y=355)
+
+    name_label1.place(height=100,width=300, x=550, y=390)
     name_label2.place(height=100,width=300, x=550, y=20)
     globals.name_label3.place(height=30,width=150, x=177, y=10)
     globals.name_label4.place(height=50,width=200, x=145, y=450)
     
     globals.voice_label.place(height=50,width=250, x=750, y=470)
-    voice_btn.place(height=30,width=80, x=600, y=480)
+    voice_btn.place(height=35,width=100, x=600, y=480)
     
 def initialize_chess():
     for i in range(16):
@@ -146,6 +180,8 @@ def main():
 
     initialize_board()
     initialize_chess()
+
+    threading.Thread(target=wait_for_resign_or_draw_event).start()
 
     if not globals.color_val:
         threading.Thread(target=others_move).start()

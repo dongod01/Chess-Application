@@ -1,61 +1,130 @@
 import globals 
+import select
 from helper import *
 
+def resigned():
+    global resign_window
+    resign_window.destroy()
+    resultant_string = "1"
+    globals.resign_draw_socket.sendall(resultant_string.encode())
+    globals.game_ended = True
+    print("Game has ended!!!")
+
+def initiate_resign():
+    print("\nThe other person has resigned !!!!\n")
+    
+    global resign_window
+    resign_window = tk.Toplevel(globals.window)
+    resign_window.geometry("300x200")
+
+    label = tk.Label(resign_window,text = "Your Opponent has resigned!!")
+    label.place(height=70,width=250,x=25,y=5)
+
+    button1 = tk.Button(resign_window,text = "End Game" , command = resigned)
+    button1.place(height=50,width=80, x=110, y=120)
+
+def accepted():
+    global draw_window
+    draw_window.destroy()
+    resultant_string = "1"
+    globals.resign_draw_socket.sendall(resultant_string.encode())
+    globals.game_ended = True   
+    print("Game has ended!!!")
+
+def rejected():
+    global draw_window
+    draw_window.destroy()
+    resultant_string = "0"
+    globals.resign_draw_socket.sendall(resultant_string.encode())
+
+def initiate_draw():
+    print("\nThe other person wants to draw !!!!\n")
+    global draw_window
+    draw_window = tk.Toplevel(globals.window)
+    draw_window.geometry("300x200")
+
+    label = tk.Label(draw_window,text = "Your Opponent has offered a draw!!")
+    label.place(height=80,width=250,x=25,y=5)
+
+    button1 = tk.Button(draw_window,text = "Accept" , command = accepted)
+    button1.place(height=40,width=80, x=110, y=90)
+
+    button2 = tk.Button(draw_window,text = "Reject" , command = rejected)
+    button2.place(height=40,width=80, x=110, y=150)
+
+def wait_for_resign_or_draw_event():
+    resign_or_draw_event,_,_ = select.select([globals.resign_draw_socket],[],[])
+    for it in resign_or_draw_event:
+        if (it == globals.resign_draw_socket):
+            temp_str = globals.resign_draw_socket.recv(1024).decode()
+            if (temp_str == "1"):
+                initiate_resign()
+            elif (temp_str == "0"):
+                initiate_draw()
+
 def others_move():
-    globals.lock
-    globals.lock.acquire()
-    try:
-        str_other = globals.my_socket.recv(1024).decode()
-        str1,str2,str3 = str_other.split(',')
-         
-        prev = 63 - int(str1)
-        k = 63 - int(str2)
-            
-        print("this is in others move " + str(prev) + "  " + str(k))
-        print("the thread count is " + str(threading.active_count()))
-        GUI_move_impl(prev,k,str3,False)
+    if (not globals.game_ended):
+        globals.lock
+        globals.lock.acquire()
+        try:
+            str_other = globals.my_socket.recv(1024).decode()
+            if (len(str_other) == 1) :
+                if (str_other == '1') :
+                    initiate_resign()
+                elif (str_other == "0") :
+                    initiate_draw()
+            else :            
+                str1,str2,str3 = str_other.split(',')
+                
+                prev = 63 - int(str1)
+                k = 63 - int(str2)
+                    
+                print("this is in others move " + str(prev) + "  " + str(k))
+                print("the thread count is " + str(threading.active_count()))
+                GUI_move_impl(prev,k,str3,False)
 
-        globals.move_counter+=1
+                globals.move_counter+=1
 
-        globals.name_label4["text"] = "Your Move"
+                globals.name_label4["text"] = "Your Move"
 
-    finally:
-        globals.lock.release()
+        finally:
+            globals.lock.release()
 
 def my_move(k):
-    
-    if globals.x:
-        ind4 = globals.chess_list.index(k)
-        if (ind4 in range(0,16)):   
-            globals.prev = k
-            print(k)
-            globals.button_list[k].configure(bg = 'green')
+    if not globals.game_ended:
+        if globals.x:
+            ind4 = globals.chess_list.index(k)
+            if (ind4 in range(0,16)):   
+                globals.prev = k
+                print(k)
+                globals.button_list[k].configure(bg = 'green')
+            else:
+                globals.x = not globals.x
+
         else:
-            globals.x = not globals.x
+            print(k)
+            # Handling the case when sam==e square is clicked twice
+            if k==globals.prev and (k//8+k%8)%2==0:
+                globals.button_list[k].configure(bg = '#8af542')
+            elif k==globals.prev and (k//8+k%8)%2!=0:
+                globals.button_list[k].configure(bg = 'white')
 
-    else:
-        print(k)
-        # Handling the case when sam==e square is clicked twice
-        if k==globals.prev and (k//8+k%8)%2==0:
-            globals.button_list[k].configure(bg = '#8af542')
-        elif k==globals.prev and (k//8+k%8)%2!=0:
-            globals.button_list[k].configure(bg = 'white')
+            else: 
+                if ((globals.move_counter%2 == 1 and not globals.color_val) or (globals.move_counter % 2 == 0 and globals.color_val)):
+                    ret1,ret2 = GUI_move_impl(globals.prev,k,'t',True)       
 
-        else: 
-            ret1,ret2 = GUI_move_impl(globals.prev,k,'t',True)       
+                    if(ret1):
+                        globals.name_label4["text"] = "Opponent's Move"
+                        reinstate_color(globals.prev)
+                        reinstate_color(k)
+                        globals.move_counter+=1
+                        send_move(globals.prev,k,ret2)
+                        threading.Thread(target=others_move).start()
+                        
+                        globals.prev = -1
 
-            if(ret1):
-                globals.name_label4["text"] = "Opponent's Move"
-                reinstate_color(globals.prev)
-                reinstate_color(k)
-                globals.move_counter+=1
-                send_move(globals.prev,k,ret2)
-                threading.Thread(target=others_move).start()
-                
-                globals.prev = -1
-
-    globals.x = not globals.x
-    if (globals.x and ret1) : return ret1   
+        globals.x = not globals.x
+        if (globals.x and ret1) : return ret1   
 
 def GUI_move_impl(prev,k,prom_char,called_from):
 

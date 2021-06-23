@@ -171,6 +171,7 @@ def func_return(string1):
 def call_message_box():
     globals.pop = tk.Toplevel(globals.window)
     globals.pop.geometry("50x200")
+    
     if (globals.color_val):
         button1 = tk.Button(globals.pop,bg='white',command = lambda : func_return('q'))
         button1.place(height=50,width=50, x=0, y=0)
