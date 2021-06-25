@@ -176,8 +176,7 @@ def main():
     globals.lock = threading.Lock()
     globals.window = tk.Toplevel(globals.main_window)
     globals.board = chess.Board()
-    
-    PGN_init()
+
     globals.game.headers["Event"] = "Chess Application Practice Game"
     today = date.today()
     dt = today.strftime("%Y.%m.%d")

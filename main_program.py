@@ -3,6 +3,7 @@
 """
 
 """ always use loopback or ::1 or [::1] for local please """ 
+from helper import PGN_init
 import os
 import globals
 from gui import main as gui_main
@@ -31,6 +32,7 @@ def negotiate_color_without_name():
             negotiated = True
     
     if (negotiated):
+        PGN_init()
         if globals.color_val:
             globals.game.headers["White"] = globals.name1
             globals.game.headers["Black"] = globals.name2
