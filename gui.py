@@ -82,7 +82,7 @@ def initialize_board():
     globals.voice_label = tk.Label( globals.window, text = "(Empty)", font = ("Arial",12))
 
     frame = tk.Frame(globals.window)
-    frame.place(height=200,width=400, x=500, y=150)
+    frame.place(height=230,width=400, x=500, y=120)
     
     globals.moves_table = Moves_Table(frame)
     globals.moves_table.pack(side="top", fill="both", expand=True)
@@ -96,8 +96,8 @@ def initialize_board():
     globals.name_label3.configure(anchor="center")
 
     name_label1.place(height=100,width=300, x=550, y=390)
-    name_label2.place(height=100,width=300, x=550, y=20)
-    globals.name_label3.place(height=30,width=200, x=177, y=10)
+    name_label2.place(height=100,width=300, x=550, y=10)
+    globals.name_label3.place(height=30,width=200, x=152, y=10)
     globals.name_label4.place(height=50,width=200, x=145, y=450)
     
     globals.voice_label.place(height=50,width=250, x=750, y=470)

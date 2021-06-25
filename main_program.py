@@ -43,14 +43,15 @@ def negotiate_color_without_name():
         player_name_label.destroy()
         color_entry_box.destroy()
         Submit_Button.destroy()
-        heading_label.place(height=400,width=500, x=50, y=0)
+        heading_label.place(height=400,width=550, x=25, y=0)
+        
         if globals.color_val:
             heading_label["text"] = "Game:\n" + str(globals.name1) + "\n(White)\n vs \n(Black)\n" + str(globals.name2)
         else:
             heading_label["text"] = "Game:\n" + str(globals.name2) + "\n(White)\n vs \n(Black)\n" + str(globals.name1)
         
         details_label = tk.Label(globals.main_window,font = ("Arial",14))
-        details_label.place(height=300,width=500, x=50, y=300)
+        details_label.place(height=300,width=550, x=25, y=300)
         
         ip1 = globals.my_socket.getsockname()
         ip2 = globals.my_socket.getpeername()
