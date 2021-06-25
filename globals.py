@@ -28,6 +28,7 @@ name2 = ""
 
 name_label3 = None
 name_label4 = None
+pgn_button = None
 
 newp='t'
 

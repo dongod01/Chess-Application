@@ -3,12 +3,13 @@
 """
 
 """ always use loopback or ::1 or [::1] for local please """ 
-
+import os
 import globals
 from gui import main as gui_main
 import socket
 import tkinter as tk
 import threading 
+
 
 count_connected_clients = 0
 

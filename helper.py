@@ -3,10 +3,28 @@ import chess.pgn
 import tkinter as tk
 from PIL import Image, ImageTk
 import time
-from datetime import date
+import os
+from datetime import datetime,date
 import threading
+from tkinter.filedialog import asksaveasfile
+import globals
 
-import globals 
+
+def addPGN():
+    folder_name = 'Games'
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+    today = datetime.today()
+    dt = today.strftime("%d%m%Y")
+    now = datetime.now()
+    ct = now.strftime("%H%M%S")
+    pgnfile_name = globals.name1 + '_' + dt + '_'  + ct + '.txt'
+    fp = asksaveasfile(initialfile = pgnfile_name,defaultextension=".txt",filetypes=[("All Files","*.*"),("Text Document","*.txt")])
+    fp.write(str(globals.game))    
+
+def addPGNbutton():
+    globals.pgn_button = tk.Button(globals.main_window,text="Download PGN file",command = addPGN)
+    globals.pgn_button.place(height=50,width=300, x=160, y=310)
 
 def txtEvent(event):
     if(event.state==12 and event.keysym=='c' ):

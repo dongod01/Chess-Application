@@ -2,11 +2,20 @@ import globals
 import select
 from helper import *
 
+
 def resigned():
     global resign_window
     resign_window.destroy()
     resultant_string = "1"
     globals.resign_draw_socket.sendall(resultant_string.encode())
+    
+    globals.name_label3["text"] = " You win by resignation :)"
+    if globals.color_val:
+        globals.game.headers["Result"] = "1-0"
+    else:
+        globals.game.headers["Result"] = "0-1"
+    
+    addPGNbutton()
     globals.game_ended = True
     print("Game has ended!!!")
 
@@ -28,7 +37,10 @@ def accepted():
     draw_window.destroy()
     resultant_string = "1"
     globals.resign_draw_socket.sendall(resultant_string.encode())
-    globals.game_ended = True   
+    globals.name_label3["text"] = " Draw by agreement"
+    globals.game.headers["Result"] = "1/2-1/2"
+    globals.game_ended = True
+    addPGNbutton()
     print("Game has ended!!!")
 
 def rejected():
@@ -63,6 +75,8 @@ def wait_for_resign_or_draw_event():
                 initiate_draw()
 
 def others_move():
+    globals.name_label3["text"] = "Match Ongoing"
+
     if (not globals.game_ended):
         globals.lock
         globals.lock.acquire()
@@ -111,6 +125,7 @@ def my_move(k):
 
             else: 
                 if ((globals.move_counter%2 == 1 and not globals.color_val) or (globals.move_counter % 2 == 0 and globals.color_val)):
+                    globals.name_label3["text"] = "Match Ongoing"
                     ret1,ret2 = GUI_move_impl(globals.prev,k,'t',True)       
 
                     if(ret1):
@@ -124,6 +139,7 @@ def my_move(k):
                         globals.prev = -1
 
         globals.x = not globals.x
+        
         if (globals.x and ret1) : return ret1   
 
 def GUI_move_impl(prev,k,prom_char,called_from):

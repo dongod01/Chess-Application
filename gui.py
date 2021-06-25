@@ -11,9 +11,15 @@ def resign():
         globals.resign_draw_socket.sendall(resultant_string.encode())
 
         string_response = globals.resign_draw_socket.recv(1024).decode()
-        if (string_response == "1"): print("Opponent has resigned!!!")
+        if (string_response == "1"):
+            print("Opponent has resigned!!!")
+            globals.name_label3["text"] = " You lose by resignation :("
+            if not globals.color_val:
+                globals.game.headers["Result"] = "1-0"
+            else:
+                globals.game.headers["Result"] = "0-1"
         print("Game Ended")
-
+        addPGNbutton()
         globals.game_ended = True
 
 def draw():
@@ -25,11 +31,16 @@ def draw():
         
         if (string_response == "1"): 
             print("Opponent has accepted the draw offer!!")
+            globals.name_label3["text"] = " Draw by Agreement"
+            globals.game.headers["Result"] = "1/2-1/2"
+            addPGNbutton()
             globals.game_ended = True
             print("Game has ended!!!")
 
         elif (string_response == "0"):
             print("Opponent has declined the draw offer so continue playing !!")
+
+            globals.name_label3["text"] = " Draw offer rejected"
 
         globals.draw_offer_count += 1
 
@@ -38,6 +49,8 @@ def start_capture_thread():
     t2.start()
 
 def initialize_board():
+    
+    
     print("Initializing board wait!!!")
     highest = 400
     k=0
@@ -81,9 +94,11 @@ def initialize_board():
     draw_button = tk.Button(globals.window,bg='#388e8e',text = "Draw", command = draw)
     draw_button.place(height=30,width=100, x=740, y=355)
 
+    globals.name_label3.configure(anchor="center")
+
     name_label1.place(height=100,width=300, x=550, y=390)
     name_label2.place(height=100,width=300, x=550, y=20)
-    globals.name_label3.place(height=30,width=150, x=177, y=10)
+    globals.name_label3.place(height=30,width=200, x=177, y=10)
     globals.name_label4.place(height=50,width=200, x=145, y=450)
     
     globals.voice_label.place(height=50,width=250, x=750, y=470)
@@ -169,8 +184,8 @@ def main():
     globals.game.headers["Date"] = dt
 
     print("This is " + str(globals.color_val))
-
-    globals.window.title('Chess')
+    globals.main_window.title('Chess Application - ' + globals.name1)
+    globals.window.title('Chess - ' + globals.name1)
     globals.window.geometry("960x540")
     globals.window.resizable(True,True)
 
