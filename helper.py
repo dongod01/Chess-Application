@@ -9,6 +9,8 @@ import threading
 from tkinter.filedialog import asksaveasfile
 import globals
 
+def PGN_init():
+    globals.game = chess.pgn.Game()
 
 def addPGN():
     folder_name = 'Games'

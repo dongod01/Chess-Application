@@ -1,9 +1,0 @@
-1> complete gui , after the canvas chess is ready and moves ko design karo and then return the moves
-2> networking design karo
-3> sound design karo
-
-DONE: Fix promotion: Add flag/parameter to GUI_imple to indicate others_move/my_move
-
-Create more files/proper inclusion -- Done
-
-

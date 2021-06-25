@@ -50,7 +50,6 @@ def start_capture_thread():
 
 def initialize_board():
     
-    
     print("Initializing board wait!!!")
     highest = 400
     k=0
@@ -178,6 +177,7 @@ def main():
     globals.window = tk.Toplevel(globals.main_window)
     globals.board = chess.Board()
     
+    PGN_init()
     globals.game.headers["Event"] = "Chess Application Practice Game"
     today = date.today()
     dt = today.strftime("%Y.%m.%d")

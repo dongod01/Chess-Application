@@ -1,9 +1,7 @@
-import chess.pgn
-
 window = None
 lock = None
 board = None
-game = chess.pgn.Game()
+game = None
 node = None
 pop = None                  # pop is used for promotion
 main_window = None
