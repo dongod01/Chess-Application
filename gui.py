@@ -7,29 +7,32 @@ from sound import sound_impl
 
 def resign():
     if (not globals.game_ended):
-        resultant_string = "1"
+        resultant_string = "Resigning"
         globals.resign_draw_socket.sendall(resultant_string.encode())
 
         string_response = globals.resign_draw_socket.recv(1024).decode()
-        if (string_response == "1"):
-            print("Opponent has resigned!!!")
+        
+        print(string_response)
+
+        if (string_response == "Resign_Accepted"):
             globals.name_label3["text"] = " You lose by resignation :("
             if not globals.color_val:
                 globals.game.headers["Result"] = "1-0"
             else:
                 globals.game.headers["Result"] = "0-1"
+        
         print("Game Ended")
         addPGNbutton()
         globals.game_ended = True
 
 def draw():
     if (not globals.game_ended and globals.draw_offer_count == 0):
-        resultant_string = "0"
+        resultant_string = "Drawing"
         globals.resign_draw_socket.sendall(resultant_string.encode())
 
         string_response = globals.resign_draw_socket.recv(1024).decode()
         
-        if (string_response == "1"): 
+        if (string_response == "Draw_Accepted"): 
             print("Opponent has accepted the draw offer!!")
             globals.name_label3["text"] = " Draw by Agreement"
             globals.game.headers["Result"] = "1/2-1/2"
@@ -37,7 +40,7 @@ def draw():
             globals.game_ended = True
             print("Game has ended!!!")
 
-        elif (string_response == "0"):
+        elif (string_response == "Draw_Rejected"):
             print("Opponent has declined the draw offer so continue playing !!")
 
             globals.name_label3["text"] = " Draw offer rejected"

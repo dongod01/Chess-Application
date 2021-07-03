@@ -1,11 +1,10 @@
 import globals 
-import select
 from helper import *
 
 def resigned():
     global resign_window
     resign_window.destroy()
-    resultant_string = "1"
+    resultant_string = "Resign_Accepted"
     globals.resign_draw_socket.sendall(resultant_string.encode())
     
     globals.name_label3["text"] = " You win by resignation :)"
@@ -34,7 +33,7 @@ def initiate_resign():
 def accepted():
     global draw_window
     draw_window.destroy()
-    resultant_string = "1"
+    resultant_string = "Draw_Accepted"
     globals.resign_draw_socket.sendall(resultant_string.encode())
     globals.name_label3["text"] = " Draw by agreement"
     globals.game.headers["Result"] = "1/2-1/2"
@@ -45,7 +44,7 @@ def accepted():
 def rejected():
     global draw_window
     draw_window.destroy()
-    resultant_string = "0"
+    resultant_string = "Draw_Rejected"
     globals.resign_draw_socket.sendall(resultant_string.encode())
 
 def initiate_draw():
@@ -78,20 +77,10 @@ def wait_for_resign_or_draw_event():
             
             continue    
 
-        if (temp_str == "1"):
+        if (temp_str == "Resigning"):
             initiate_resign()
-        elif (temp_str == "0"):
+        elif (temp_str == "Drawing"):
             initiate_draw()
-
-def wait_for_resign_or_draw_event1():
-    resign_or_draw_event,_,_ = select.select([globals.resign_draw_socket],[],[])
-    for it in resign_or_draw_event:
-        if (it == globals.resign_draw_socket):
-            temp_str = globals.resign_draw_socket.recv(1024).decode()
-            if (temp_str == "1"):
-                initiate_resign()
-            elif (temp_str == "0"):
-                initiate_draw()
 
 def others_move():
     globals.name_label3["text"] = "Match Ongoing"
