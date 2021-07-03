@@ -38,7 +38,7 @@ The setup is a one time process.
 2. To play using speech input, select the "Speak!" button and speak. For example, you are playing the first move e4. You need to speak this move as " e2 e4 ", with the initial and final squares for any piece. If the input is accepeted, the move will be played, else you will be notified and you can repeat this step all over again.(*)
 3. During the game, if you wish to resign/draw at any point you can select the options provided. If your opponent does the same, you will be notified accordingly and the games ends.
 4. After the game has ended you can get the PGN of the game from the main window, and save it at a desired location locally. You can use the Games folder in the directory to store the game.
-5. CLose the application.
+5. Close the application.
 
 
 Notes:
