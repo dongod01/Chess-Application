@@ -2,7 +2,6 @@ import globals
 import select
 from helper import *
 
-
 def resigned():
     global resign_window
     resign_window.destroy()
@@ -65,6 +64,26 @@ def initiate_draw():
     button2.place(height=40,width=80, x=110, y=150)
 
 def wait_for_resign_or_draw_event():
+    while True:
+        try:
+            temp_str = globals.resign_draw_socket.recv(1024).decode()
+        except Exception as e: 
+            print(e)
+            
+            # Always the client connects to the server so if the connection is broken the server should
+            # wait while the client should try to reconnect
+            
+            if (globals.is_client): globals.resign_draw_socket.connect(globals.other_ip_address,8080)
+            else : time.sleep(3)
+            
+            continue    
+
+        if (temp_str == "1"):
+            initiate_resign()
+        elif (temp_str == "0"):
+            initiate_draw()
+
+def wait_for_resign_or_draw_event1():
     resign_or_draw_event,_,_ = select.select([globals.resign_draw_socket],[],[])
     for it in resign_or_draw_event:
         if (it == globals.resign_draw_socket):

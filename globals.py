@@ -1,5 +1,7 @@
 resign_draw_socket = None
 my_socket = None
+other_ip_address = ""
+is_client = None
 
 name1 = ""
 name2 = ""
@@ -21,7 +23,7 @@ name_label4 = None
 
 pgn_button = None
 
-#Even_clicks checker
+                        
 button_list = []
 chess_list = []
 
@@ -30,7 +32,8 @@ entry_list = [None]*300
 move_counter = 0
 move_list = []
 color_val = None
-x = True
+
+x = True                    #Even_clicks checker
 newp='t'
 prev = -1
 draw_offer_count = 0

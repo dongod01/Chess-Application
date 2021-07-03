@@ -186,7 +186,7 @@ def main():
     globals.main_window.title('Chess Application - ' + globals.name1)
     globals.window.title('Chess - ' + globals.name1)
     globals.window.geometry("960x540")
-    globals.window.resizable(True,True)
+    globals.window.resizable(False,False)
 
     print("*********************************************************")
     print("*********************************************************")

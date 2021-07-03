@@ -11,7 +11,6 @@ import socket
 import tkinter as tk
 import threading 
 
-
 count_connected_clients = 0
 
 def negotiate_color_without_name():
@@ -88,6 +87,7 @@ def gui_negotiate_color_server_wrapper():
         print("the client has not connected wait")
 
 def gui_server():
+    globals.is_client = False
     Server_button.destroy()
     Client_button.destroy()
     
@@ -98,7 +98,7 @@ def gui_server():
     color_button.place(height=50,width=300, x=150, y=350)
 
 def submit_client():
-    server_ip = IP_Entry_Box.get()
+    globals.other_ip_address = server_ip = IP_Entry_Box.get()
     server_port = int(Port_Entry_Box.get())
 
     IP_Entry_Box.destroy()
@@ -112,6 +112,7 @@ def submit_client():
     color_button.place(height=50,width=300, x=150, y=350)
 
 def gui_client():
+    globals.is_client = True
     Server_button.destroy()
     Client_button.destroy()
 
@@ -228,6 +229,9 @@ def make_server():
         count_connected_clients += 2
         heading_label["text"] = "Host: " + str(globals.my_socket.getsockname()[0]) + "\n\nIP address: " + str(globals.my_socket.getsockname()[1])
     
+    while True:
+        globals.resign_draw_socket, _ = my_server_socket.accept()
+
 def networking():
     print("Enter 1 to make yourself a server or 2 to make yourself a client")
     val = int(input())
