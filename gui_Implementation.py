@@ -73,7 +73,7 @@ def wait_for_resign_or_draw_event():
             # Always the client connects to the server so if the connection is broken the server should
             # wait while the client should try to reconnect
             
-            if (globals.is_client): globals.resign_draw_socket.connect(globals.other_ip_address,8080)
+            if (globals.is_client): globals.resign_draw_socket.connect((globals.other_ip_address,8080))
             else : time.sleep(3)
             
             continue    

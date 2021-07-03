@@ -22,11 +22,11 @@ def negotiate_color_without_name():
     globals.my_socket.sendall(color1.encode())
     color2 = globals.my_socket.recv(1024).decode()
 
-    if ((color1 == 'b' or color1 == 'B') and (color2 == 'w'or color2 == 'W')):
+    if ((color1[0] == 'b' or color1[0] == 'B') and (color2[0] == 'w'or color2[0] == 'W')):
             globals.color_val = False
             negotiated = True
 
-    elif ((color1 == 'w' or color1 == 'W') and (color2 == 'b' or color2 == 'B')):
+    elif ((color1[0] == 'w' or color1[0] == 'W') and (color2[0] == 'b' or color2[0] == 'B')):
             globals.color_val = True
             negotiated = True
     
