@@ -11,7 +11,6 @@ import socket
 import tkinter as tk
 import threading 
 
-
 count_connected_clients = 0
 
 def negotiate_color_without_name():
@@ -23,11 +22,11 @@ def negotiate_color_without_name():
     globals.my_socket.sendall(color1.encode())
     color2 = globals.my_socket.recv(1024).decode()
 
-    if ((color1 == 'b' or color1 == 'B') and (color2 == 'w'or color2 == 'W')):
+    if ((color1[0] == 'b' or color1[0] == 'B') and (color2[0] == 'w'or color2[0] == 'W')):
             globals.color_val = False
             negotiated = True
 
-    elif ((color1 == 'w' or color1 == 'W') and (color2 == 'b' or color2 == 'B')):
+    elif ((color1[0] == 'w' or color1[0] == 'W') and (color2[0] == 'b' or color2[0] == 'B')):
             globals.color_val = True
             negotiated = True
     
@@ -44,6 +43,7 @@ def negotiate_color_without_name():
         color_entry_box.destroy()
         Submit_Button.destroy()
         heading_label.place(height=400,width=550, x=25, y=0)
+        
         if globals.color_val:
             heading_label["text"] = "Game:\n" + str(globals.name1) + "\n(White)\n vs \n(Black)\n" + str(globals.name2)
         else:
@@ -87,6 +87,7 @@ def gui_negotiate_color_server_wrapper():
         print("the client has not connected wait")
 
 def gui_server():
+    globals.is_client = False
     Server_button.destroy()
     Client_button.destroy()
     
@@ -97,7 +98,7 @@ def gui_server():
     color_button.place(height=50,width=300, x=150, y=350)
 
 def submit_client():
-    server_ip = IP_Entry_Box.get()
+    globals.other_ip_address = server_ip = IP_Entry_Box.get()
     server_port = int(Port_Entry_Box.get())
 
     IP_Entry_Box.destroy()
@@ -111,6 +112,7 @@ def submit_client():
     color_button.place(height=50,width=300, x=150, y=350)
 
 def gui_client():
+    globals.is_client = True
     Server_button.destroy()
     Client_button.destroy()
 
@@ -227,6 +229,9 @@ def make_server():
         count_connected_clients += 2
         heading_label["text"] = "Host: " + str(globals.my_socket.getsockname()[0]) + "\n\nIP address: " + str(globals.my_socket.getsockname()[1])
     
+    while True:
+        globals.resign_draw_socket, _ = my_server_socket.accept()
+
 def networking():
     print("Enter 1 to make yourself a server or 2 to make yourself a client")
     val = int(input())
