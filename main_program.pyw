@@ -92,7 +92,11 @@ def gui_server():
     Server_button.destroy()
     Client_button.destroy() 
     
-    heading_label["text"] = "IP address: \n" + socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET6)[1][4][0]
+    try :
+        temp_str = socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET6)[1][4][0]
+        heading_label["text"] = "IP address: \n" + temp_str
+    except :
+        print("IPV6 Error")
 
     threading.Thread(target = make_server).start()
 
