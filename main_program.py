@@ -230,7 +230,7 @@ def make_server():
     global count_connected_clients,heading_label
     globals.server_port = random.randrange(10000,50000,1)
     addr = ("", globals.server_port)  
-    heading_label["text"] += "\n\n\n Port number: " + str(globals.server_port)
+    heading_label["text"] += "\n Port number: " + str(globals.server_port)
     if socket.has_dualstack_ipv6():
         globals.my_server_socket = socket.create_server(addr, family=socket.AF_INET6, dualstack_ipv6=True)
     else:
