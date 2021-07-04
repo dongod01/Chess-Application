@@ -2,15 +2,15 @@
 # Wherever it is not mentioned explicitly True means white and False means black
 
 import globals 
-from gui_Implementation import *
+from move_Implementation import *
 from sound import sound_impl
 
 def resign():
     if (not globals.game_ended):
         resultant_string = "Resigning"
-        globals.resign_draw_socket.sendall(resultant_string.encode())
+        globals.resign_draw_socket_sending.sendall(resultant_string.encode())
 
-        string_response = globals.resign_draw_socket.recv(1024).decode()
+        string_response = globals.resign_draw_socket_sending.recv(1024).decode()
         
         print(string_response)
 
@@ -28,9 +28,9 @@ def resign():
 def draw():
     if (not globals.game_ended and globals.draw_offer_count == 0):
         resultant_string = "Drawing"
-        globals.resign_draw_socket.sendall(resultant_string.encode())
+        globals.resign_draw_socket_sending.sendall(resultant_string.encode())
 
-        string_response = globals.resign_draw_socket.recv(1024).decode()
+        string_response = globals.resign_draw_socket_sending.recv(1024).decode()
         
         if (string_response == "Draw_Accepted"): 
             print("Opponent has accepted the draw offer!!")
@@ -39,13 +39,21 @@ def draw():
             addPGNbutton()
             globals.game_ended = True
             print("Game has ended!!!")
+            globals.draw_offer_count += 1
 
         elif (string_response == "Draw_Rejected"):
             print("Opponent has declined the draw offer so continue playing !!")
 
             globals.name_label3["text"] = " Draw offer rejected"
+            globals.draw_offer_count += 1
+        
+def resign_wrapper():
+    t2 = threading.Thread(target=resign)
+    t2.start()
 
-        globals.draw_offer_count += 1
+def draw_wrapper():
+    t2 = threading.Thread(target=draw)
+    t2.start()
 
 def start_capture_thread():
     t2 = threading.Thread(target=sound_impl)
@@ -90,10 +98,10 @@ def initialize_board():
     globals.moves_table = Moves_Table(frame)
     globals.moves_table.pack(side="top", fill="both", expand=True)
 
-    resign_button = tk.Button(globals.window,bg='#388e8e',text = "Resign", command = resign)
+    resign_button = tk.Button(globals.window,bg='#388e8e',text = "Resign", command = resign_wrapper)
     resign_button.place(height=30,width=100, x=550, y=355)
     
-    draw_button = tk.Button(globals.window,bg='#388e8e',text = "Draw", command = draw)
+    draw_button = tk.Button(globals.window,bg='#388e8e',text = "Draw", command = draw_wrapper)
     draw_button.place(height=30,width=100, x=740, y=355)
 
     globals.name_label3.configure(anchor="center")
@@ -112,18 +120,18 @@ def initialize_chess():
     for i in range(48,64):
         globals.chess_list.append(i)
     
-    png_path = {       "wr":"alpha/wr.png",
-                       "wn":"alpha/wn.png",
-                       "wb":"alpha/wb.png",
-                       "wq":"alpha/wq.png",
-                       "wk":"alpha/wk.png",
-                       "wp":"alpha/wp.png",
-                       "br":"alpha/br.png",
-                       "bn":"alpha/bn.png",
-                       "bb":"alpha/bb.png",
-                       "bq":"alpha/bq.png",
-                       "bk":"alpha/bk.png",
-                       "bpawn":"alpha/bp1.jpg"}
+    png_path = {       "wr":"Image_piece/wr.png",
+                       "wn":"Image_piece/wn.png",
+                       "wb":"Image_piece/wb.png",
+                       "wq":"Image_piece/wq.png",
+                       "wk":"Image_piece/wk.png",
+                       "wp":"Image_piece/wp.png",
+                       "br":"Image_piece/br.png",
+                       "bn":"Image_piece/bn.png",
+                       "bb":"Image_piece/bb.png",
+                       "bq":"Image_piece/bq.png",
+                       "bk":"Image_piece/bk.png",
+                       "bpawn":"Image_piece/bp1.jpg"}
     
     if (globals.color_val == True):
         print("Initializing for white man!!!")

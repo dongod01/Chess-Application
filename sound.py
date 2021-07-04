@@ -1,7 +1,7 @@
 import speech_recognition as sr
 import globals
 import threading
-from gui_Implementation import my_move as sound_move
+from move_Implementation import my_move as sound_move
 
 def sound_impl():
     if (not globals.game_ended):

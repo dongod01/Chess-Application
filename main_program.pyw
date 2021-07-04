@@ -216,7 +216,7 @@ def make_server():
     addr = ("", 8080)  
     
     if socket.has_dualstack_ipv6():
-        my_server_socket = socket.create_server(addr, family=socket.AF_INET6, dualstack_ipv6=True)
+        globals.my_server_socket = socket.create_server(addr, family=socket.AF_INET6, dualstack_ipv6=True)
     else:
         my_server_socket = socket.create_server(addr)
 

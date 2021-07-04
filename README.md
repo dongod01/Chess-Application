@@ -17,11 +17,14 @@ The user interface of the game has been designed to precision. All the basic fea
 The setup is a one time process.
 
 1. Clone this github project as a local repository. Alternatively, use  https://downgit.github.io/#/home to download the repository locally.
+
 2. Windows Users: 
     Install Python from the official website, https://www.python.org/downloads/
+    
     Windows users need to run the "install.bat" file to install all the python libraries necessary (Run this bat as an administrator).
 3. Linux/MacOS/UNIX Users:
     Make the install.sh file executable using this command in the terminal opened in the downloaded/cloned directory:        sudo chmod +x install.sh
+    
     You need to run the "install.sh" file to install all the python libraries necessary        ./install.sh
 
 ### Starting the game
@@ -29,12 +32,15 @@ The setup is a one time process.
 1. Enter your name in the text box.
 2. Mutually decide on becoming either the server/client with the opponent.
 3. (i) If you choose to be the server,  select the server option and send the displayed IP address on your interface to your opponent.
+   
    (ii) If are the client, select the client option . Next, get the IP address from your opponent and enter it. The port number is 8080 always.
-4. Choose the colors as white/w or black/b.If you and your opponent choose same colours, the text boxes will be refreshed and you need to choose again. The moment opposite       colors are chosen, the game will begin.
+4. Choose the colors as white/w or black/b.If you and your opponent choose same colours, the text boxes will be refreshed and you need to choose again.
+   The moment opposite colors are chosen, the game will begin.
 
 ### Playing the game
 
-1. The game opens in a separate window. To move a piece, choose the square in which the piece is located and the destination square. If the move is legal, it will be played, else you need to go again.
+1. The game opens in a separate window. To move a piece, choose the square in which the piece is located and the destination square. If the move is legal, it will be played,  else you need to go again.
+
 2. To play using speech input, select the "Speak!" button and speak. For example, you are playing the first move e4. You need to speak this move as " e2 e4 ", with the initial and final squares for any piece. If the input is accepeted, the move will be played, else you will be notified and you can repeat this step all over again.(*)
 3. During the game, if you wish to resign/draw at any point you can select the options provided. If your opponent does the same, you will be notified accordingly and the games ends.
 4. After the game has ended you can get the PGN of the game from the main window, and save it at a desired location locally. You can use the Games folder in the directory to store the game.

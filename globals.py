@@ -1,7 +1,10 @@
-resign_draw_socket = None
-my_socket = None
-other_ip_address = ""
+resign_draw_socket_recieving = None
+resign_draw_socket_sending = None
+game_socket = None
+my_server_socket = None
+
 is_client = None
+other_ip_address = ""
 
 name1 = ""
 name2 = ""

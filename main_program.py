@@ -19,8 +19,8 @@ def negotiate_color_without_name():
     
     print("What color do you want ??? Please enter b/B or w/W inside function")
     color1 = color_entry_box.get()
-    globals.my_socket.sendall(color1.encode())
-    color2 = globals.my_socket.recv(1024).decode()
+    globals.game_socket.sendall(color1.encode())
+    color2 = globals.game_socket.recv(1024).decode()
 
     if ((color1[0] == 'b' or color1[0] == 'B') and (color2[0] == 'w'or color2[0] == 'W')):
             globals.color_val = False
@@ -52,14 +52,14 @@ def negotiate_color_without_name():
         details_label = tk.Label(globals.main_window,font = ("Arial",14))
         details_label.place(height=300,width=550, x=25, y=300)
         
-        ip1 = globals.my_socket.getsockname()
-        ip2 = globals.my_socket.getpeername()
+        ip1 = globals.game_socket.getsockname()
+        ip2 = globals.game_socket.getpeername()
 
-        ip3 = globals.resign_draw_socket.getsockname()
-        ip4 = globals.resign_draw_socket.getpeername()
+        #ip3 = globals.resign_draw_socket.getsockname()
+        #ip4 = globals.resign_draw_socket.getpeername()
 
         details_label["text"] = "My IP Address: " + str(ip1[0]) + "\n Port: " + str(ip1[1]) + "\n\nOpponent's IP Address: " + str(ip2[0]) + "\n Port: " + str(ip2[1])
-        print("My Resign Address: " + str(ip3[0]) + "\n Port: " + str(ip3[1]) + "\n\nOpponent's Resign Address: " + str(ip4[0]) + "\n Port: " + str(ip4[1]))
+        #print("My Resign Address: " + str(ip3[0]) + "\n Port: " + str(ip3[1]) + "\n\nOpponent's Resign Address: " + str(ip4[0]) + "\n Port: " + str(ip4[1]))
 
         gui_main()
 
@@ -69,8 +69,8 @@ def gui_negotiate_color():
     
         color_button.destroy()
         heading_label["text"] = "Choose Color"
-        globals.my_socket.sendall(globals.name1.encode())
-        globals.name2 = globals.my_socket.recv(1024).decode()
+        globals.game_socket.sendall(globals.name1.encode())
+        globals.name2 = globals.game_socket.recv(1024).decode()
 
         global color_entry_box
         color_entry_box = tk.Entry(globals.main_window)
@@ -180,15 +180,15 @@ def load_gui():
 def negotitiate_color():	## True is white and false is black
     print("What is your name")
     globals.name1 = input()
-    globals.my_socket.sendall(globals.name1.encode())
+    globals.game_socket.sendall(globals.name1.encode())
 
-    globals.name2 = globals.my_socket.recv(1024).decode()
+    globals.name2 = globals.game_socket.recv(1024).decode()
     
     while (True):
         print("What color do you want ??? Please enter b/B or w/W")
         color1 = input()
-        globals.my_socket.sendall(color1.encode())
-        color2 = globals.my_socket.recv(1024).decode()
+        globals.game_socket.sendall(color1.encode())
+        color2 = globals.game_socket.recv(1024).decode()
 
         if ((color1 == 'b' or color1 == 'B') and (color2 == 'w'or color2 == 'W')):
             globals.color_val = False
@@ -200,16 +200,20 @@ def negotitiate_color():	## True is white and false is black
 def make_client(server_ip_addr,socket_port_number):
     global count_connected_clients
     if socket.has_ipv6:
-        globals.my_socket = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
-        globals.resign_draw_socket = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
+        globals.game_socket = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
+        globals.resign_draw_socket_recieving = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
+        globals.resign_draw_socket_sending = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
     else:
-        globals.my_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        globals.resign_draw_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        globals.game_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        globals.resign_draw_socket_recieving = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        globals.resign_draw_socket_sending = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
     try:
-        globals.my_socket.connect((server_ip_addr, socket_port_number))
-        globals.resign_draw_socket.connect((server_ip_addr, socket_port_number))
-        count_connected_clients += 2
+        globals.game_socket.connect((server_ip_addr, socket_port_number))
+        globals.resign_draw_socket_recieving.connect((server_ip_addr, socket_port_number))
+        globals.resign_draw_socket_sending.connect((server_ip_addr, socket_port_number))
+
+        count_connected_clients += 3
     except:
         count_connected_clients = 0
 
@@ -218,19 +222,17 @@ def make_server():
     addr = ("", 8080)  
     
     if socket.has_dualstack_ipv6():
-        my_server_socket = socket.create_server(addr, family=socket.AF_INET6, dualstack_ipv6=True)
+        globals.my_server_socket = socket.create_server(addr, family=socket.AF_INET6, dualstack_ipv6=True)
     else:
-        my_server_socket = socket.create_server(addr)
+        globals.my_server_socket = socket.create_server(addr)
 
-    globals.my_socket, _ = my_server_socket.accept()
-    globals.resign_draw_socket, _ = my_server_socket.accept()
+    globals.game_socket, _ = globals.my_server_socket.accept()
+    globals.resign_draw_socket_sending, _ = globals.my_server_socket.accept()
+    globals.resign_draw_socket_recieving,_ = globals.my_server_socket.accept()
  
-    if (globals.my_socket != None and globals.resign_draw_socket != None): 
-        count_connected_clients += 2
-        heading_label["text"] = "Host: " + str(globals.my_socket.getsockname()[0]) + "\n\nIP address: " + str(globals.my_socket.getsockname()[1])
-    
-    while True:
-        globals.resign_draw_socket, _ = my_server_socket.accept()
+    if (globals.game_socket != None and globals.resign_draw_socket_recieving != None and globals.resign_draw_socket_sending != None): 
+        count_connected_clients += 3
+        heading_label["text"] = "Host: " + str(globals.game_socket.getsockname()[0]) + "\n\nIP address: " + str(globals.game_socket.getsockname()[1])
 
 def networking():
     print("Enter 1 to make yourself a server or 2 to make yourself a client")

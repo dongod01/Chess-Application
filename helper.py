@@ -228,4 +228,4 @@ def call_message_box():
 def send_move(prev,k,prom_char):    
 
     resultant_string = str(prev) + "," + str(k)+ "," + prom_char
-    globals.my_socket.sendall(resultant_string.encode())
+    globals.game_socket.sendall(resultant_string.encode())
