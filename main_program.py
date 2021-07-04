@@ -9,7 +9,8 @@ import globals
 from gui import main as gui_main
 import socket
 import tkinter as tk
-import threading 
+import threading
+import random 
 
 count_connected_clients = 0
 
@@ -42,7 +43,7 @@ def negotiate_color_without_name():
         player_name_label.destroy()
         color_entry_box.destroy()
         Submit_Button.destroy()
-        heading_label.place(height=400,width=550, x=25, y=0)
+        heading_label.place(height=600,width=550, x=25, y=0)
         
         if globals.color_val:
             heading_label["text"] = "Game:\n" + str(globals.name1) + "\n(White)\n vs \n(Black)\n" + str(globals.name2)
@@ -96,7 +97,7 @@ def gui_server():
         temp_str = socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET6)[1][4][0]
         heading_label["text"] = "IP address: \n" + temp_str
     except :
-        print("IPV6 Error")
+        heading_label["text"] = "The Game needs a IPV6 connection"
 
     threading.Thread(target = make_server).start()
 
@@ -226,9 +227,10 @@ def make_client(server_ip_addr,socket_port_number):
         count_connected_clients = 0
 
 def make_server():
-    global count_connected_clients
-    addr = ("", 8080)  
-    
+    global count_connected_clients,heading_label
+    globals.server_port = random.randrange(10000,50000,1)
+    addr = ("", globals.server_port)  
+    heading_label["text"] += "\n\n\n Port number: " + str(globals.server_port)
     if socket.has_dualstack_ipv6():
         globals.my_server_socket = socket.create_server(addr, family=socket.AF_INET6, dualstack_ipv6=True)
     else:

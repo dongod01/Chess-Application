@@ -1,3 +1,5 @@
+server_port = None
+
 resign_draw_socket_recieving = None
 resign_draw_socket_sending = None
 game_socket = None
