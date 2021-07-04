@@ -50,6 +50,8 @@ def negotiate_color_without_name():
         else:
             heading_label["text"] = "Game:\n" + str(globals.name2) + "\n(White)\n vs \n(Black)\n" + str(globals.name1)
         
+        heading_label.place(height=400,width=550, x=25, y=-50)
+        
         details_label = tk.Label(globals.main_window,font = ("Arial",14))
         details_label.place(height=300,width=550, x=25, y=300)
         

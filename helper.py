@@ -26,7 +26,7 @@ def addPGN():
 
 def addPGNbutton():
     globals.pgn_button = tk.Button(globals.main_window,text="Download PGN file",command = addPGN)
-    globals.pgn_button.place(height=50,width=300, x=160, y=310)
+    globals.pgn_button.place(height=50,width=300, x=160, y=270)
 
 def txtEvent(event):
     if(event.state==12 and event.keysym=='c' ):
