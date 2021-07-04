@@ -96,7 +96,7 @@ def gui_server():
         temp_str = socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET6)[1][4][0]
         heading_label["text"] = "IP address: \n" + temp_str
     except :
-        print("IPV6 Error")
+        heading_label["text"] = "The Game needs a proper"
 
     threading.Thread(target = make_server).start()
 
