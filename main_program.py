@@ -58,7 +58,7 @@ def negotiate_color_without_name():
         #ip3 = globals.resign_draw_socket.getsockname()
         #ip4 = globals.resign_draw_socket.getpeername()
 
-        details_label["text"] = "My IP Address: " + str(ip1[0]) + "\n Port: " + str(ip1[1]) + "\n\nOpponent's IP Address: " + str(ip2[0]) + "\n Port: " + str(ip2[1])
+        details_label["text"] = "My IP Address: \n" + str(ip1[0]) + "\n Port: " + str(ip1[1]) + "\n\nOpponent's IP Address: \n" + str(ip2[0]) + "\n Port: " + str(ip2[1])
         #print("My Resign Address: " + str(ip3[0]) + "\n Port: " + str(ip3[1]) + "\n\nOpponent's Resign Address: " + str(ip4[0]) + "\n Port: " + str(ip4[1]))
 
         gui_main()
@@ -87,10 +87,13 @@ def gui_negotiate_color_server_wrapper():
         print("the client has not connected wait")
 
 def gui_server():
+    heading_label["text"]=""
     globals.is_client = False
     Server_button.destroy()
-    Client_button.destroy()
+    Client_button.destroy() 
     
+    heading_label["text"] = "IP address: \n" + socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET6)[1][4][0]
+
     threading.Thread(target = make_server).start()
 
     global color_button
@@ -98,6 +101,7 @@ def gui_server():
     color_button.place(height=50,width=300, x=150, y=350)
 
 def submit_client():
+    heading_label["text"] = ""
     globals.other_ip_address = server_ip = IP_Entry_Box.get()
     server_port = int(Port_Entry_Box.get())
 
@@ -232,7 +236,6 @@ def make_server():
  
     if (globals.game_socket != None and globals.resign_draw_socket_recieving != None and globals.resign_draw_socket_sending != None): 
         count_connected_clients += 3
-        heading_label["text"] = "Host: " + str(globals.game_socket.getsockname()[0]) + "\n\nIP address: " + str(globals.game_socket.getsockname()[1])
 
 def networking():
     print("Enter 1 to make yourself a server or 2 to make yourself a client")
